@@ -175,3 +175,16 @@ class BenchmarkReport(BaseModel):
     p95_latency_ms: float
     results: List[EvalResultItem] = Field(default_factory=list)
     timestamp: str
+
+class ChatbotMessageRequest(BaseModel):
+    message: str
+    conversation_history: Optional[List[Dict[str, str]]] = Field(default_factory=list)
+    session_id: Optional[str] = "default-session"
+
+class ChatbotMessageResponse(BaseModel):
+    reply: str
+    model_used: str
+    citations: List[Dict[str, Any]] = Field(default_factory=list)
+    is_grounded: bool = False
+    latency_ms: float = 0.0
+    success: bool = True

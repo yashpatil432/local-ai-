@@ -513,11 +513,13 @@ class LocalGemmaProvider(BaseModelProvider):
 class Gemma4Provider(BaseModelProvider):
     """
     Live Gemma 4 / GenAI Provider.
-    If GEMINI_API_KEY is configured, connects to Google GenAI API or Ollama / OpenAI-compatible endpoint.
+    If GEMINI_API_KEY is configured, connects to Google GenAI REST API.
     Otherwise delegates safely to LocalGemmaProvider.
     """
     def __init__(self):
-        self.api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        from backend.app.core.env_loader import get_gemini_api_key, get_merged_ca_bundle
+        self.api_key = get_gemini_api_key()
+        self.ca_bundle = get_merged_ca_bundle()
         self.fallback = LocalGemmaProvider()
         
     def generate_grounded_answer(
@@ -527,6 +529,10 @@ class Gemma4Provider(BaseModelProvider):
         assessment: AnswerabilityAssessment,
         detected_language: str
     ) -> QueryResponse:
+        from backend.app.core.env_loader import get_gemini_api_key, get_merged_ca_bundle
+        self.api_key = get_gemini_api_key()
+        self.ca_bundle = get_merged_ca_bundle()
+
         # If API key is not present, fall back immediately and reliably to LocalGemmaProvider
         if not self.api_key:
             return self.fallback.generate_grounded_answer(
@@ -534,9 +540,7 @@ class Gemma4Provider(BaseModelProvider):
             )
             
         try:
-            import google.generativeai as genai
-            genai.configure(api_key=self.api_key)
-            
+            import requests
             # Format context
             context_blocks = []
             for c, score in retrieved_chunks[:4]:
@@ -554,26 +558,37 @@ ANSWERABILITY GATE PASS: {assessment.is_answerable}
 RETRIEVED CONTEXT:
 {context_str}
 
-Please generate the structured JSON output now:
+Please generate your verified grounded response:
 """
-            model = genai.GenerativeModel("gemini-2.0-flash")
-            response = model.generate_content(prompt)
-            raw_text = response.text.strip()
-            
-            # Parse JSON
-            json_match = re.search(r'\{.*\}', raw_text, re.DOTALL)
-            if json_match:
-                parsed = json.loads(json_match.group(0))
-                # Validate and adapt to QueryResponse
-                # If parsed is valid, build QueryResponse; otherwise fallback
-                return self.fallback.generate_grounded_answer(
-                    question, retrieved_chunks, assessment, detected_language
+            # Call Google GenAI endpoint
+            for model_name in ["models/gemini-flash-lite-latest", "models/gemma-4-26b-a4b-it"]:
+                url = f"https://generativelanguage.googleapis.com/v1beta/{model_name}:generateContent?key={self.api_key}"
+                resp = requests.post(
+                    url,
+                    json={"contents": [{"parts": [{"text": prompt}]}]},
+                    verify=self.ca_bundle,
+                    timeout=10
                 )
-            else:
-                return self.fallback.generate_grounded_answer(
-                    question, retrieved_chunks, assessment, detected_language
-                )
-        except Exception as e:
+                if resp.status_code == 200:
+                    data = resp.json()
+                    candidates = data.get("candidates", [])
+                    if candidates and "content" in candidates[0]:
+                        parts = candidates[0]["content"].get("parts", [])
+                        if parts and "text" in parts[0]:
+                            raw_reply = parts[0]["text"]
+                            # Clean and create response using local template wrapper with live text
+                            base_res = self.fallback.generate_grounded_answer(
+                                question, retrieved_chunks, assessment, detected_language
+                            )
+                            # If answerable, enhance answer text with model generation
+                            if base_res.answerable:
+                                from backend.app.core.chatbot_engine import clean_reasoning_artifacts
+                                base_res.answer = clean_reasoning_artifacts(raw_reply)
+                            return base_res
+            return self.fallback.generate_grounded_answer(
+                question, retrieved_chunks, assessment, detected_language
+            )
+        except Exception:
             # Robust fallback on any external API failure or timeout
             return self.fallback.generate_grounded_answer(
                 question, retrieved_chunks, assessment, detected_language

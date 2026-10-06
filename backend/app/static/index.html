@@ -618,6 +618,57 @@
     html.light #collections-grid h4 {
       color: #0f172a !important;
     }
+
+    /* Floating AI Chatbot in Day & Night Mode */
+    #locallens-chat-widget {
+      transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #locallens-chat-widget.chat-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px) scale(0.96);
+    }
+    #locallens-chat-widget.chat-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+    
+    html.light #locallens-chat-widget {
+      background-color: #ffffff !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.18) !important;
+    }
+    html.light #chatbot-header {
+      background-color: #f8fafc !important;
+      border-bottom: 1.5px solid #e2e8f0 !important;
+    }
+    html.light #chatbot-messages {
+      background-color: #f1f5f9 !important;
+    }
+    html.light .chat-bubble-ai {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.light .chat-bubble-user {
+      background-color: #0284c7 !important;
+      color: #ffffff !important;
+    }
+    html.light #chatbot-footer {
+      background-color: #ffffff !important;
+      border-top: 1.5px solid #e2e8f0 !important;
+    }
+    html.light #chatbot-input {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.light #chatbot-input:focus {
+      background-color: #ffffff !important;
+      border-color: #0284c7 !important;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
@@ -2060,6 +2111,123 @@ USER QUESTION ─────────► QUERY PROCESSOR (Language Detect & 
     </div>
   </div>
 
+
+  <!-- ========================================================= -->
+  <!-- FLOATING GEMMA 4 AI CHATBOT WIDGET                         -->
+  <!-- ========================================================= -->
+
+  <!-- Chatbot Launcher Button (Bottom-Right) -->
+  <div id="locallens-chat-launcher" class="fixed bottom-6 right-6 z-40">
+    <button onclick="toggleChatbotWidget()" class="group relative flex items-center space-x-2.5 px-4 py-3 bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-indigo-500 text-white rounded-full shadow-2xl shadow-brand-500/30 hover:shadow-brand-500/50 transition-all duration-300 transform hover:scale-105 active:scale-95 border border-white/20">
+      <span class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+      </span>
+      <i data-lucide="bot" class="w-5 h-5 transition-transform group-hover:rotate-12"></i>
+      <span class="text-xs font-bold tracking-wide">Ask Gemma 4</span>
+      <span class="hidden sm:inline text-[10px] px-1.5 py-0.5 rounded bg-white/20 font-mono font-semibold">Live AI</span>
+    </button>
+  </div>
+
+  <!-- Chatbot Floating Window -->
+  <div id="locallens-chat-widget" class="chat-hidden fixed bottom-20 right-4 sm:right-6 z-50 w-[94vw] sm:w-[420px] md:w-[460px] h-[580px] max-h-[82vh] bg-slate-900 border border-slate-750 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+    
+    <!-- Chatbot Header -->
+    <div id="chatbot-header" class="px-4 py-3 bg-slate-850 border-b border-slate-800 flex items-center justify-between shrink-0">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
+          <i data-lucide="bot" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <h3 class="text-xs sm:text-sm font-bold text-white tracking-tight">LocalLens AI</h3>
+            <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold flex items-center space-x-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Online</span>
+            </span>
+          </div>
+          <p class="text-[10px] text-slate-400 font-mono">Gemma 4 • Grounded in Official GRs</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-1">
+        <button onclick="clearChatHistory()" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition" title="Clear Conversation">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        </button>
+        <button onclick="toggleChatbotWidget()" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition" title="Minimize Chat">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Messages Stream -->
+    <div id="chatbot-messages" class="flex-1 p-4 space-y-3 overflow-y-auto bg-slate-950/70 text-xs">
+      
+      <!-- Welcome Message & Quick Starters -->
+      <div class="space-y-3" id="chatbot-welcome-card">
+        <div class="chat-bubble-ai p-3.5 rounded-xl bg-slate-850 border border-slate-800 text-slate-200 space-y-2">
+          <div class="flex items-center space-x-1.5 text-brand-400 font-bold text-xs">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Welcome to LocalLens Assistant!</span>
+          </div>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            I am powered by <strong>Google Gemma 4</strong> and grounded directly in authoritative Maharashtra Government Resolutions (GRs). Ask me in English, Marathi, or Hindi!
+          </p>
+        </div>
+
+        <!-- Quick Starter Chips -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Try common queries:</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="sendQuickPrompt('What is the annual income cap for EBC scholarship in Maharashtra?')" class="pill-btn pill-default text-[11px] py-1">🎓 EBC Scholarship Cap</button>
+            <button onclick="sendQuickPrompt('What is the eligibility and age limit for Majhi Ladki Bahin Yojna?')" class="pill-btn pill-default text-[11px] py-1">👩 Majhi Ladki Bahin Age</button>
+            <button onclick="sendQuickPrompt('Are White Ration Card holders eligible for MJPJAY 2.0 free healthcare?')" class="pill-btn pill-default text-[11px] py-1">🏥 MJPJAY Healthcare</button>
+            <button onclick="sendQuickPrompt('What is the electricity subsidy for 7.5 HP pumps under Baliraja Yojna?')" class="pill-btn pill-default text-[11px] py-1">⚡ Baliraja Free Electricity</button>
+            <button onclick="sendQuickPrompt('स्वाधार योजनेसाठी महाविद्यालयापासून किमान किती अंतर आवश्यक आहे?')" class="pill-btn pill-marathi text-[11px] py-1">🇮🇳 स्वाधार योजना अंतर</button>
+            <button onclick="sendQuickPrompt('What is the statutory deadline for Caste Certificate under RTS Act?')" class="pill-btn pill-default text-[11px] py-1">📜 RTS 21-Day Deadline</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Typing / Thinking Indicator -->
+    <div id="chatbot-typing" class="hidden px-4 py-2 bg-slate-900 border-t border-slate-800 flex items-center space-x-2 text-[11px] text-slate-400 shrink-0">
+      <div class="flex items-center space-x-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-bounce"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style="animation-delay: 0.15s"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce" style="animation-delay: 0.3s"></span>
+      </div>
+      <span class="font-mono text-[10px]">Gemma 4 is retrieving & reasoning...</span>
+    </div>
+
+    <!-- Chatbot Input Footer -->
+    <div id="chatbot-footer" class="p-3 bg-slate-850 border-t border-slate-800 shrink-0 space-y-2">
+      <form id="chatbot-form" onsubmit="handleChatSubmit(event)" class="flex items-center space-x-2">
+        <input 
+          id="chatbot-input" 
+          type="text" 
+          placeholder="Ask Gemma 4 about schemes, rules, or documents..." 
+          autocomplete="off"
+          class="flex-1 px-3.5 py-2 text-xs rounded-xl bg-slate-900 border border-slate-750 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition shadow-inner"
+        />
+        <button 
+          id="chatbot-send-btn" 
+          type="submit" 
+          class="px-3.5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl shadow-md transition flex items-center justify-center shrink-0 cursor-pointer disabled:opacity-50"
+        >
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+      <div class="flex items-center justify-between text-[10px] text-slate-500 px-1 font-mono">
+        <span class="flex items-center space-x-1">
+          <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i>
+          <span>Source-Grounded</span>
+        </span>
+        <span>Enter to send</span>
+      </div>
+    </div>
+
+  </div>
 
   <!-- FOOTER -->
   <footer class="border-t border-slate-800/80 bg-slate-900/60 py-6 text-center text-xs text-slate-500">

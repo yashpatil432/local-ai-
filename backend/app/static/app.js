@@ -1655,3 +1655,236 @@ function closeUserSourceModal() {
   document.getElementById('user-source-modal').classList.add('hidden');
 }
 
+// =====================================================================
+// FLOATING GEMMA 4 AI CHATBOT CONTROLLER
+// =====================================================================
+
+let chatbotHistory = [];
+let isChatbotOpen = false;
+
+function toggleChatbotWidget() {
+  const widget = document.getElementById('locallens-chat-widget');
+  if (!widget) return;
+
+  isChatbotOpen = !isChatbotOpen;
+  if (isChatbotOpen) {
+    widget.classList.remove('chat-hidden');
+    widget.classList.add('chat-visible');
+    setTimeout(() => {
+      const input = document.getElementById('chatbot-input');
+      if (input) input.focus();
+    }, 150);
+  } else {
+    widget.classList.remove('chat-visible');
+    widget.classList.add('chat-hidden');
+  }
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function sendQuickPrompt(promptText) {
+  const input = document.getElementById('chatbot-input');
+  if (input) {
+    input.value = promptText;
+    handleChatSubmit();
+  }
+}
+
+async function handleChatSubmit(event) {
+  if (event) event.preventDefault();
+
+  const input = document.getElementById('chatbot-input');
+  const sendBtn = document.getElementById('chatbot-send-btn');
+  const messagesContainer = document.getElementById('chatbot-messages');
+  const typingIndicator = document.getElementById('chatbot-typing');
+
+  if (!input) return;
+  const message = input.value.trim();
+  if (!message) return;
+
+  // Clear input field
+  input.value = '';
+  if (sendBtn) sendBtn.disabled = true;
+
+  // Append user bubble to UI
+  appendUserBubble(message);
+
+  // Show typing indicator & scroll
+  if (typingIndicator) typingIndicator.classList.remove('hidden');
+  scrollChatToBottom();
+
+  const userSession = (typeof getUserSessionId === 'function') ? getUserSessionId() : 'default-session';
+
+  try {
+    const response = await fetch('/api/chatbot/message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: message,
+        conversation_history: chatbotHistory,
+        session_id: userSession
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Chat API error (${response.status})`);
+    }
+
+    const data = await response.json();
+
+    // Store in history for multi-turn conversational context
+    chatbotHistory.push({ role: 'user', content: message });
+    chatbotHistory.push({ role: 'model', content: data.reply });
+
+    // Append AI response bubble to UI
+    appendAiBubble(data.reply, data.model_used, data.citations, data.latency_ms);
+
+  } catch (err) {
+    appendAiBubble(
+      `Sorry, I encountered an issue: ${err.message}. Please check if the server is active.`,
+      'System Error',
+      [],
+      0
+    );
+  } finally {
+    if (typingIndicator) typingIndicator.classList.add('hidden');
+    if (sendBtn) sendBtn.disabled = false;
+    scrollChatToBottom();
+    if (window.lucide) lucide.createIcons();
+  }
+}
+
+function appendUserBubble(text) {
+  const container = document.getElementById('chatbot-messages');
+  if (!container) return;
+
+  const bubbleDiv = document.createElement('div');
+  bubbleDiv.className = 'flex justify-end';
+  bubbleDiv.innerHTML = `
+    <div class="chat-bubble-user max-w-[85%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-md text-xs leading-relaxed break-words">
+      ${escapeHtml(text)}
+    </div>
+  `;
+  container.appendChild(bubbleDiv);
+  scrollChatToBottom();
+}
+
+function appendAiBubble(replyText, modelUsed, citations, latencyMs) {
+  const container = document.getElementById('chatbot-messages');
+  if (!container) return;
+
+  const bubbleDiv = document.createElement('div');
+  bubbleDiv.className = 'flex items-start space-x-2 justify-start';
+
+  // Format citations HTML if present
+  let citationsHtml = '';
+  if (citations && citations.length > 0) {
+    citationsHtml = `
+      <div class="mt-2.5 pt-2 border-t border-slate-700/50 space-y-1.5">
+        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 flex items-center space-x-1">
+          <i data-lucide="bookmark" class="w-3 h-3 text-brand-400"></i>
+          <span>Official Citations (${citations.length})</span>
+        </span>
+        <div class="flex flex-wrap gap-1">
+          ${citations.slice(0, 3).map(c => `
+            <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-brand-300 font-mono" title="${escapeHtml(c.snippet || '')}">
+              <i data-lucide="file-text" class="w-2.5 h-2.5"></i>
+              <span>${escapeHtml(c.title || 'GR')} (P.${c.page || 1})</span>
+            </span>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Model & latency badge
+  const metaHtml = `
+    <div class="mt-2 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+      <span class="flex items-center space-x-1 text-emerald-400">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span>${escapeHtml(modelUsed || 'Gemma 4')}</span>
+      </span>
+      <span>${latencyMs ? (latencyMs / 1000).toFixed(2) + 's' : ''}</span>
+    </div>
+  `;
+
+  bubbleDiv.innerHTML = `
+    <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+      <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+    </div>
+    <div class="chat-bubble-ai max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-slate-850 border border-slate-800 text-slate-100 shadow-md text-xs leading-relaxed break-words">
+      <div class="prose prose-invert prose-xs max-w-none text-slate-200 space-y-1.5">
+        ${formatChatMarkdown(replyText)}
+      </div>
+      ${citationsHtml}
+      ${metaHtml}
+    </div>
+  `;
+
+  container.appendChild(bubbleDiv);
+  scrollChatToBottom();
+}
+
+function scrollChatToBottom() {
+  const container = document.getElementById('chatbot-messages');
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+  }
+}
+
+function clearChatHistory() {
+  chatbotHistory = [];
+  const container = document.getElementById('chatbot-messages');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="space-y-3" id="chatbot-welcome-card">
+      <div class="chat-bubble-ai p-3.5 rounded-xl bg-slate-850 border border-slate-800 text-slate-200 space-y-2">
+        <div class="flex items-center space-x-1.5 text-brand-400 font-bold text-xs">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Conversation Reset</span>
+        </div>
+        <p class="text-[11px] text-slate-300 leading-relaxed">
+          Chat history has been cleared. Ask any question regarding Maharashtra government schemes, resolutions, or citizen services!
+        </p>
+      </div>
+
+      <div class="space-y-1.5">
+        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Try common queries:</span>
+        <div class="flex flex-wrap gap-1.5">
+          <button onclick="sendQuickPrompt('What is the annual income cap for EBC scholarship in Maharashtra?')" class="pill-btn pill-default text-[11px] py-1">🎓 EBC Scholarship Cap</button>
+          <button onclick="sendQuickPrompt('What is the eligibility and age limit for Majhi Ladki Bahin Yojna?')" class="pill-btn pill-default text-[11px] py-1">👩 Majhi Ladki Bahin Age</button>
+          <button onclick="sendQuickPrompt('Are White Ration Card holders eligible for MJPJAY 2.0 free healthcare?')" class="pill-btn pill-default text-[11px] py-1">🏥 MJPJAY Healthcare</button>
+          <button onclick="sendQuickPrompt('What is the electricity subsidy for 7.5 HP pumps under Baliraja Yojna?')" class="pill-btn pill-default text-[11px] py-1">⚡ Baliraja Free Electricity</button>
+          <button onclick="sendQuickPrompt('स्वाधार योजनेसाठी महाविद्यालयापासून किमान किती अंतर आवश्यक आहे?')" class="pill-btn pill-marathi text-[11px] py-1">🇮🇳 स्वाधार योजना अंतर</button>
+          <button onclick="sendQuickPrompt('What is the statutory deadline for Caste Certificate under RTS Act?')" class="pill-btn pill-default text-[11px] py-1">📜 RTS 21-Day Deadline</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  fetch('/api/chatbot/clear', { method: 'POST' }).catch(() => {});
+  if (window.lucide) lucide.createIcons();
+}
+
+function formatChatMarkdown(text) {
+  if (!text) return '';
+  let formatted = escapeHtml(text);
+
+  // Bold **text**
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
+  
+  // Italic *text*
+  formatted = formatted.replace(/\*(.*?)\*/g, '<em class="text-slate-300">$1</em>');
+
+  // Bullet points * or -
+  formatted = formatted.replace(/^\s*[\*\-]\s+(.*)$/gm, '<li class="ml-3 list-disc text-slate-200">$1</li>');
+
+  // Paragraph breaks
+  formatted = formatted.replace(/\n\n+/g, '</p><p class="mt-2 text-slate-200 leading-relaxed">');
+  formatted = formatted.replace(/\n/g, '<br/>');
+
+  return `<p class="leading-relaxed text-slate-200">${formatted}</p>`;
+}
+
+

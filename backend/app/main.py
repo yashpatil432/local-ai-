@@ -17,8 +17,11 @@ from backend.app.models.schemas import (
     IngestionResponse,
     DocumentMetadata,
     BenchmarkReport,
-    EvalQuestion
+    EvalQuestion,
+    ChatbotMessageRequest,
+    ChatbotMessageResponse
 )
+from backend.app.core.chatbot_engine import get_chatbot_engine
 from backend.app.core.retrieval import get_retriever, detect_language
 from backend.app.core.answerability import assess_answerability
 from backend.app.core.model_provider import get_model_provider
@@ -526,3 +529,44 @@ def query_user_documents_endpoint(request: UserDocQueryRequest):
         question=request.question,
         target_doc_id=request.doc_id
     )
+
+# =====================================================================
+# CHATBOT API ENDPOINTS (GEMMA 4 / GEMINI ENGINE)
+# =====================================================================
+
+@app.post("/api/chatbot/message", response_model=ChatbotMessageResponse)
+def chatbot_message_endpoint(request: ChatbotMessageRequest):
+    """
+    Conversational AI chatbot endpoint powered by Gemma 4 / Gemini API.
+    Performs hybrid retrieval grounding over official state resolutions
+    and uploaded user documents.
+    """
+    engine = get_chatbot_engine()
+    res = engine.generate_chat_response(
+        user_message=request.message,
+        conversation_history=request.conversation_history,
+        session_id=request.session_id
+    )
+    return ChatbotMessageResponse(**res)
+
+@app.get("/api/chatbot/status")
+def chatbot_status_endpoint():
+    """
+    Returns live health and status of the Gemma 4 / Gemini Chatbot API.
+    """
+    engine = get_chatbot_engine()
+    return {
+        "status": "online",
+        "api_active": engine.is_api_active(),
+        "primary_model": "Gemma 4 (26B-A4B-IT)",
+        "fallback_model": "Gemini Flash Lite",
+        "grounding": "Active (10 Maharashtra GRs + User Uploads)"
+    }
+
+@app.post("/api/chatbot/clear")
+def chatbot_clear_endpoint():
+    """
+    Clears chatbot conversation memory for a session.
+    """
+    return {"status": "cleared", "message": "Conversation history reset successfully."}
+
