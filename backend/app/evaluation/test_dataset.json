@@ -1,0 +1,402 @@
+[
+  {
+    "id": "Q001",
+    "question": "What is the annual family income limit for the Rajarshi Chhatrapati Shahu Maharaj EBC Scholarship?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_001_ebc_scholarship"],
+    "expected_key_facts": ["8,00,000", "Eight Lakh", "Tahsildar"]
+  },
+  {
+    "id": "Q002",
+    "question": "Can a student admitted through Management Quota apply for the EBC Scholarship in Maharashtra?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_001_ebc_scholarship"],
+    "expected_key_facts": ["strictly ineligible", "ineligible", "CAP merit", "disqualified"]
+  },
+  {
+    "id": "Q003",
+    "question": "What percentage of tuition fee is reimbursed for professional courses in private unaided colleges under EBC?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_001_ebc_scholarship"],
+    "expected_key_facts": ["50%", "50 percent"]
+  },
+  {
+    "id": "Q004",
+    "question": "Which authority is competent to issue the Income Certificate required for the MahaDBT EBC scholarship?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_001_ebc_scholarship"],
+    "expected_key_facts": ["Tahsildar", "Sub-Divisional Officer"]
+  },
+  {
+    "id": "Q005",
+    "question": "What is the eligible age range for women applying under Mukhyamantri Majhi Ladki Bahin Yojna (v2.1)?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_002_ladki_bahin_v2"],
+    "expected_key_facts": ["21", "65", "21 to 65"]
+  },
+  {
+    "id": "Q006",
+    "question": "How much monthly financial assistance is provided under Mukhyamantri Majhi Ladki Bahin Yojna?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_002_ladki_bahin_v2"],
+    "expected_key_facts": ["1,500", "One Thousand Five Hundred", "1500"]
+  },
+  {
+    "id": "Q007",
+    "question": "Are Yellow and Orange ration card holders exempt from submitting a separate Tahsildar income certificate for Ladki Bahin?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_002_ladki_bahin_v2"],
+    "expected_key_facts": ["exempt", "Yellow", "Orange", "proof of income"]
+  },
+  {
+    "id": "Q008",
+    "question": "What is the annual household income ceiling for Mukhyamantri Majhi Ladki Bahin Yojna?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_002_ladki_bahin_v2"],
+    "expected_key_facts": ["2,50,000", "2.5 Lakh"]
+  },
+  {
+    "id": "Q009",
+    "question": "Can a college student studying in Nashik apply for Dr. Punjabrao Deshmukh Vastigruh Nirvah Bhatta Yojna?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_004_punjabrao_deshmukh_hostel"],
+    "expected_key_facts": ["Yes", "Nashik", "Tier 1", "30,000"]
+  },
+  {
+    "id": "Q010",
+    "question": "What is the annual allowance for students in Tier 1 cities under Punjabrao Deshmukh Hostel Allowance scheme?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_004_punjabrao_deshmukh_hostel"],
+    "expected_key_facts": ["30,000", "3,000 per month", "10 months"]
+  },
+  {
+    "id": "Q011",
+    "question": "What is the landholding limit for marginal farmers (Alpabhudharak) under the Punjabrao Deshmukh scheme?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_004_punjabrao_deshmukh_hostel"],
+    "expected_key_facts": ["2.0 Hectares", "2 Hectares", "5 Acres"]
+  },
+  {
+    "id": "Q012",
+    "question": "What is the annual income limit for Sanjay Gandhi Niradhar Anudan Yojna?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_005_sanjay_gandhi_niradhar"],
+    "expected_key_facts": ["21,000", "Twenty-One Thousand"]
+  },
+  {
+    "id": "Q013",
+    "question": "What is the monthly pension amount for a single beneficiary under Sanjay Gandhi Niradhar Anudan Yojna?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_005_sanjay_gandhi_niradhar"],
+    "expected_key_facts": ["1,500", "1500 per month"]
+  },
+  {
+    "id": "Q014",
+    "question": "What is the minimum disability percentage required to qualify under Sanjay Gandhi Niradhar scheme for disabled persons?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_005_sanjay_gandhi_niradhar"],
+    "expected_key_facts": ["40%", "40 percent"]
+  },
+  {
+    "id": "Q015",
+    "question": "What is the maximum annual sum insured under Mahatma Jyotirao Phule Jan Arogya Yojna (MJPJAY 2.0)?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_006_mjpjay_health_scheme"],
+    "expected_key_facts": ["5,00,000", "5 Lakh", "Five Lakhs"]
+  },
+  {
+    "id": "Q016",
+    "question": "Are White Ration Card holders eligible for healthcare benefits under MJPJAY 2.0 in Maharashtra?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_006_mjpjay_health_scheme"],
+    "expected_key_facts": ["Yes", "White", "universal", "all ration card"]
+  },
+  {
+    "id": "Q017",
+    "question": "How many medical and surgical procedures are covered under MJPJAY 2.0?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_006_mjpjay_health_scheme"],
+    "expected_key_facts": ["1,356", "1356"]
+  },
+  {
+    "id": "Q018",
+    "question": "What is the maximum agricultural pump capacity covered under Mukhyamantri Baliraja Vij Savalat Yojna?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_007_baliraja_vij_savalat"],
+    "expected_key_facts": ["7.5 HP", "7.5 Horse Power"]
+  },
+  {
+    "id": "Q019",
+    "question": "For how many years is the Baliraja free electricity waiver granted to Maharashtra farmers?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_007_baliraja_vij_savalat"],
+    "expected_key_facts": ["5 years", "April 2024 to March 2029"]
+  },
+  {
+    "id": "Q020",
+    "question": "What is the annual state government subsidy allocated for the Baliraja Vij Savalat power waiver?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_007_baliraja_vij_savalat"],
+    "expected_key_facts": ["14,761 crore", "14761"]
+  },
+  {
+    "id": "Q021",
+    "question": "What percentage of entry-level seats are reserved in private unaided schools under RTE in Maharashtra?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_008_rte_maharashtra"],
+    "expected_key_facts": ["25%", "25 percent"]
+  },
+  {
+    "id": "Q022",
+    "question": "Is there an income limit for Disadvantaged Groups (SC/ST/OBC) applying under RTE Maharashtra 25% quota?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_008_rte_maharashtra"],
+    "expected_key_facts": ["No income limit", "no limit"]
+  },
+  {
+    "id": "Q023",
+    "question": "What is the family annual income ceiling for the Economically Weaker Section (EWS) under RTE admission in Maharashtra?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_008_rte_maharashtra"],
+    "expected_key_facts": ["1,00,000", "One Lakh"]
+  },
+  {
+    "id": "Q024",
+    "question": "What is the annual allowance under Dr. Babasaheb Ambedkar Swadhar Yojna for students in Mumbai, Pune, and Nagpur?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_009_swadhar_yojna"],
+    "expected_key_facts": ["60,000", "Tier A"]
+  },
+  {
+    "id": "Q025",
+    "question": "What is the minimum distance required between a student's home and college to qualify for Swadhar Yojna?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_009_swadhar_yojna"],
+    "expected_key_facts": ["5 km", "5 kilometers"]
+  },
+  {
+    "id": "Q026",
+    "question": "What is the statutory delivery deadline for an Income Certificate issued by Tahsildar under Maharashtra RTS Act?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_010_rts_citizen_services"],
+    "expected_key_facts": ["15 Working Days", "15 days"]
+  },
+  {
+    "id": "Q027",
+    "question": "What is the statutory delivery deadline for a Caste Certificate under the Maharashtra RTS Act?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_010_rts_citizen_services"],
+    "expected_key_facts": ["21 Working Days", "21 days"]
+  },
+  {
+    "id": "Q028",
+    "question": "Within how many days can a citizen file a First Appeal under the Maharashtra Right to Public Services Act if a service is delayed?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_010_rts_citizen_services"],
+    "expected_key_facts": ["30 days"]
+  },
+  {
+    "id": "Q029",
+    "question": "What is the statutory penalty range that can be imposed on defaulting officers under Section 10 of the RTS Act?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_010_rts_citizen_services"],
+    "expected_key_facts": ["500", "5,000", "500 to 5,000"]
+  },
+  {
+    "id": "Q030",
+    "question": "What is the official 24x7 toll-free helpline number for Mahatma Jyotirao Phule Jan Arogya Yojna (MJPJAY)?",
+    "category": "answerable",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_006_mjpjay_health_scheme"],
+    "expected_key_facts": ["155388", "1800 233 2200"]
+  },
+  {
+    "id": "Q031",
+    "question": "Does Maharashtra offer a free Tesla electric vehicle scheme for agricultural pump owners?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q032",
+    "question": "What is the government subsidy for buying an iPhone 16 Pro for college students under MahaDBT?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q033",
+    "question": "What are the eligibility criteria for the Maharashtra Government Cryptocurrency Mining Subsidy 2025?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q034",
+    "question": "Can a student studying in California, USA receive tuition reimbursement under the Maharashtra EBC Scholarship?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q035",
+    "question": "What is the monthly stipend provided to NASA interns from Maharashtra under the Baliraja Yojna?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q036",
+    "question": "How many Bitcoins are distributed to farmers under the Sanjay Gandhi Niradhar Scheme?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q037",
+    "question": "What is the free electric scooter distribution quota for engineering students in Nashik?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q038",
+    "question": "Does MJPJAY cover cosmetic plastic surgery for space tourism astronauts?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q039",
+    "question": "What is the deadline for filing a Mars Rover research scholarship application under MahaDBT?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q040",
+    "question": "How can a resident of Delhi with a Delhi ration card claim free electricity under Baliraja Yojna in Maharashtra?",
+    "category": "unanswerable",
+    "expected_answerable": false,
+    "expected_sources": [],
+    "expected_key_facts": ["abstain", "not found"]
+  },
+  {
+    "id": "Q041",
+    "question": "What was the initial age limit in the preliminary June 2024 draft of Ladki Bahin Yojna vs the current August 2024 resolution?",
+    "category": "ambiguous",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_002_ladki_bahin_v2", "scheme_003_ladki_bahin_v1_deprecated"],
+    "expected_key_facts": ["60", "65", "conflict", "superseded"]
+  },
+  {
+    "id": "Q042",
+    "question": "Did the initial order of Ladki Bahin Yojna allow Orange Ration Cards as income proof or was it strictly added in the revised resolution?",
+    "category": "ambiguous",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_002_ladki_bahin_v2", "scheme_003_ladki_bahin_v1_deprecated"],
+    "expected_key_facts": ["exemption", "revised", "superseded"]
+  },
+  {
+    "id": "Q043",
+    "question": "What was the initial application deadline in the June 2024 draft of Ladki Bahin and is it still enforced today?",
+    "category": "ambiguous",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_002_ladki_bahin_v2", "scheme_003_ladki_bahin_v1_deprecated"],
+    "expected_key_facts": ["15th July 2024", "extended", "latest resolution"]
+  },
+  {
+    "id": "Q044",
+    "question": "Can a student admitted without CAP merit claim fee reimbursement if they submit an affidavit of poverty under EBC?",
+    "category": "ambiguous",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_001_ebc_scholarship"],
+    "expected_key_facts": ["ineligible", "CAP mandatory", "affidavits not accepted"]
+  },
+  {
+    "id": "Q045",
+    "question": "Does Punjabrao Deshmukh hostel scheme cover students living at home with their parents in the same town as their college?",
+    "category": "ambiguous",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_004_punjabrao_deshmukh_hostel"],
+    "expected_key_facts": ["hostel", "rent agreement", "residing in hostel"]
+  },
+  {
+    "id": "Q046",
+    "question": "मुख्यमंत्री माझी लाडकी बहीण योजनेसाठी वयाची अट काय आहे?",
+    "category": "multilingual",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_002_ladki_bahin_v2"],
+    "expected_key_facts": ["२१ ते ६५", "21 to 65", "वयोमर्यादा"]
+  },
+  {
+    "id": "Q047",
+    "question": "राजर्षी शाहू महाराज ईबीसी (EBC) शिष्यवृत्तीसाठी उत्पन्नाची कमाल मर्यादा किती आहे?",
+    "category": "multilingual",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_001_ebc_scholarship"],
+    "expected_key_facts": ["८,००,०००", "8 लाख", "8 Lakh"]
+  },
+  {
+    "id": "Q048",
+    "question": "महात्मा ज्योतिराव फुले जन आरोग्य योजनेत किती रकमेपर्यंत मोफत उपचार मिळतात?",
+    "category": "multilingual",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_006_mjpjay_health_scheme"],
+    "expected_key_facts": ["५,००,०००", "5 लाख", "पाच लाख"]
+  },
+  {
+    "id": "Q049",
+    "question": "संजय गांधी निराधार योजना के लिए परिवार की वार्षिक आय सीमा क्या है?",
+    "category": "multilingual",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_005_sanjay_gandhi_niradhar"],
+    "expected_key_facts": ["21,000", "इक्कीस हजार"]
+  },
+  {
+    "id": "Q050",
+    "question": "Is scheme ke liye Nashik cha student hostel allowance sathi apply karu shakto ka?",
+    "category": "multilingual",
+    "expected_answerable": true,
+    "expected_sources": ["scheme_004_punjabrao_deshmukh_hostel"],
+    "expected_key_facts": ["Tier 1", "30,000", "Nashik", "होय", "eligible"]
+  }
+]

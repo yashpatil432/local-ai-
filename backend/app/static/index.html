@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalLens | AI for Knowledge Too Local for General Models</title>
+  <meta name="description" content="Ask locally. Get answers you can verify. Open-weight, source-grounded, multilingual AI assistant for Maharashtra Government Schemes and Citizen Services.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#b9dffe',
+              300: '#7cc3fd',
+              400: '#36a3fa',
+              500: '#0c85eb',
+              600: '#0067c9',
+              700: '#0152a3',
+              800: '#064686',
+              900: '#0b3c6f',
+              950: '#07264a'
+            },
+            slate: {
+              850: '#131b2e',
+              900: '#0b1120',
+              950: '#060913'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script>
+    // Immediate Theme Initialization (prevents FOUC)
+    (function() {
+      const savedTheme = localStorage.getItem('locallens-theme') || 'dark';
+      if (savedTheme === 'light') {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    })();
+  </script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Smooth Theme Transition */
+    body, header, main, footer, section, div, button, input, textarea, select {
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.1s ease;
+    }
+
+    /* Custom scrollbars (Night Mode) */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0b1120; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    
+    .glow-amber {
+      box-shadow: 0 0 25px -3px rgba(245, 158, 11, 0.4);
+    }
+    .glow-blue {
+      box-shadow: 0 0 25px -3px rgba(14, 165, 233, 0.35);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 25px -3px rgba(16, 185, 129, 0.3);
+    }
+
+    /* ========================================================= */
+    /* PILL BUTTONS (DAY & NIGHT)                               */
+    /* ========================================================= */
+    .pill-btn {
+      font-size: 0.75rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    
+    /* Dark Mode Pills */
+    html.dark .pill-default {
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid rgba(51, 65, 85, 0.8);
+    }
+    html.dark .pill-default:hover {
+      background: #334155;
+      color: #ffffff;
+      border-color: #64748b;
+    }
+    html.dark .pill-marathi {
+      background: rgba(11, 38, 74, 0.6);
+      color: #7cc3fd;
+      border: 1px solid rgba(6, 70, 134, 0.8);
+    }
+    html.dark .pill-marathi:hover {
+      background: rgba(11, 38, 74, 0.9);
+      color: #bae6fd;
+    }
+    html.dark .pill-amber {
+      background: rgba(69, 26, 3, 0.4);
+      color: #fcd34d;
+      border: 1px solid rgba(180, 83, 9, 0.6);
+    }
+    html.dark .pill-amber:hover {
+      background: rgba(69, 26, 3, 0.7);
+      color: #fef08a;
+    }
+    html.dark .pill-rose {
+      background: rgba(76, 5, 25, 0.4);
+      color: #fda4af;
+      border: 1px solid rgba(190, 18, 60, 0.6);
+    }
+    html.dark .pill-rose:hover {
+      background: rgba(76, 5, 25, 0.7);
+      color: #fecdd3;
+    }
+
+    /* Day Mode Pills (Crisp, High-Contrast, Color-Coded) */
+    html.light .pill-default {
+      background: #ffffff !important;
+      color: #1e293b !important;
+      border: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.light .pill-default:hover {
+      background: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-color: #94a3b8 !important;
+    }
+    html.light .pill-marathi {
+      background: #eff6ff !important;
+      color: #1d4ed8 !important;
+      border: 1.5px solid #93c5fd !important;
+      font-weight: 600 !important;
+      box-shadow: 0 1px 2px rgba(29, 78, 216, 0.08) !important;
+    }
+    html.light .pill-marathi:hover {
+      background: #dbeafe !important;
+      color: #1e40af !important;
+      border-color: #60a5fa !important;
+    }
+    html.light .pill-amber {
+      background: #fffbeb !important;
+      color: #b45309 !important;
+      border: 1.5px solid #fcd34d !important;
+      font-weight: 600 !important;
+      box-shadow: 0 1px 2px rgba(180, 83, 9, 0.08) !important;
+    }
+    html.light .pill-amber:hover {
+      background: #fef3c7 !important;
+      color: #92400e !important;
+      border-color: #f59e0b !important;
+    }
+    html.light .pill-rose {
+      background: #fff1f2 !important;
+      color: #be123c !important;
+      border: 1.5px solid #fca5a5 !important;
+      font-weight: 600 !important;
+      box-shadow: 0 1px 2px rgba(190, 18, 60, 0.08) !important;
+    }
+    html.light .pill-rose:hover {
+      background: #ffe4e6 !important;
+      color: #9f1239 !important;
+      border-color: #f43f5e !important;
+    }
+
+    /* ========================================================= */
+    /* HERO BANNER (DAY & NIGHT)                                 */
+    /* ========================================================= */
+    /* Day Mode Hero Banner: Clean Light Blue Gradient Card */
+    html.light .hero-banner {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 50%, #e0effe 100%) !important;
+      background-image: linear-gradient(135deg, #ffffff 0%, #f0f7ff 50%, #e0effe 100%) !important;
+      border: 1.5px solid #bae6fd !important;
+      box-shadow: 0 4px 20px -2px rgba(12, 133, 235, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
+    }
+    html.light .hero-title,
+    html.light .hero-banner h1 {
+      color: #0b3c6f !important;
+      font-weight: 800 !important;
+    }
+    html.light .hero-desc,
+    html.light .hero-banner p {
+      color: #334155 !important;
+      font-weight: 500 !important;
+      font-size: 0.925rem !important;
+      line-height: 1.6 !important;
+    }
+    html.light .hero-badge {
+      background-color: #e0effe !important;
+      border: 1.5px solid #7dd3fc !important;
+      color: #0369a1 !important;
+      font-weight: 700 !important;
+    }
+
+    /* ========================================================= */
+    /* DAY MODE GENERAL OVERRIDES                                */
+    /* ========================================================= */
+    html.light body {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+
+    /* Scrollbars in Day Mode */
+    html.light ::-webkit-scrollbar-track { background: #f1f5f9; }
+    html.light ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    html.light ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Header & Navigation */
+    html.light header {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+    }
+    html.light .subnav-bar {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    /* Inactive Tabs in Day Mode - CRISP & READABLE */
+    html.light .tab-btn:not(.active-tab):not(.bg-slate-800) {
+      color: #334155 !important;
+      font-weight: 600 !important;
+    }
+    html.light .tab-btn:not(.active-tab):not(.bg-slate-800):hover {
+      color: #0284c7 !important;
+      background-color: #e0f2fe !important;
+    }
+
+    /* Active Tab in Day Mode - VIBRANT BRAND BLUE */
+    html.light .tab-btn.active-tab,
+    html.light .tab-btn.bg-slate-800 {
+      background-color: #0284c7 !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      border: 1px solid #0284c7 !important;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25) !important;
+    }
+    html.light .tab-btn.active-tab i,
+    html.light .tab-btn.bg-slate-800 i {
+      color: #ffffff !important;
+    }
+
+    /* Top stats pill in Day Mode */
+    html.light #stats-pill,
+    html.light header .bg-slate-850 {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #334155 !important;
+      font-weight: 500 !important;
+    }
+    html.light header .bg-slate-850 strong {
+      color: #0f172a !important;
+    }
+
+    /* Theme Toggle button in Day Mode */
+    html.light #theme-toggle-btn {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+      font-weight: 600 !important;
+    }
+    html.light #theme-toggle-btn:hover {
+      background-color: #e2e8f0 !important;
+    }
+
+    /* Surfaces & Containers */
+    html.light .bg-slate-950 {
+      background-color: #f8fafc !important;
+    }
+    html.light .bg-slate-950\/70,
+    html.light .bg-slate-950\/80,
+    html.light .bg-slate-950\/90,
+    html.light .bg-slate-900,
+    html.light .bg-slate-900\/60,
+    html.light .bg-slate-900\/70,
+    html.light .bg-slate-900\/80,
+    html.light .bg-slate-900\/90 {
+      background-color: #ffffff !important;
+    }
+    html.light .bg-slate-850 {
+      background-color: #f8fafc !important;
+    }
+    html.light .bg-slate-850\/50,
+    html.light .bg-slate-850\/60,
+    html.light .bg-slate-850\/80 {
+      background-color: #f1f5f9 !important;
+    }
+    html.light .bg-slate-800 {
+      background-color: #f1f5f9 !important;
+    }
+    html.light .bg-slate-800\/40,
+    html.light .bg-slate-800\/60,
+    html.light .bg-slate-800\/80 {
+      background-color: #f1f5f9 !important;
+    }
+    html.light .hover\:bg-slate-800:hover,
+    html.light .hover\:bg-slate-800\/60:hover,
+    html.light .hover\:bg-slate-750:hover {
+      background-color: #e2e8f0 !important;
+    }
+
+    /* Borders */
+    html.light .border-slate-800,
+    html.light .border-slate-800\/40,
+    html.light .border-slate-800\/60,
+    html.light .border-slate-800\/80 {
+      border-color: #e2e8f0 !important;
+    }
+    html.light .border-slate-750 {
+      border-color: #cbd5e1 !important;
+    }
+    html.light .border-slate-700,
+    html.light .border-slate-700\/40,
+    html.light .border-slate-700\/60,
+    html.light .border-slate-700\/80 {
+      border-color: #cbd5e1 !important;
+    }
+
+    /* Cards shadow in Day Mode */
+    html.light .rounded-2xl.border,
+    html.light .rounded-xl.border {
+      box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.05), 0 1px 3px -1px rgba(0, 0, 0, 0.03) !important;
+    }
+
+    /* Typography */
+    html.light h1:not(.hero-title),
+    html.light h2,
+    html.light h3,
+    html.light h4 {
+      color: #0f172a !important;
+    }
+    html.light .text-slate-100 { color: #0f172a !important; }
+    html.light .text-slate-200 { color: #1e293b !important; }
+    html.light .text-slate-300 { color: #334155 !important; }
+    html.light .text-slate-400 { color: #475569 !important; }
+    html.light .text-slate-500 { color: #64748b !important; }
+    html.light .text-white:not([class*="bg-brand"]):not([class*="from-"]):not([class*="btn-"]):not(.keep-white):not(#btn-submit):not(.active-tab) {
+      color: #0f172a !important;
+    }
+
+    /* Badges & Accent Colors */
+    html.light .text-brand-400 { color: #0284c7 !important; }
+    html.light .bg-brand-500\/10 { background-color: #e0f2fe !important; }
+    html.light .border-brand-500\/20 { border-color: #bae6fd !important; }
+
+    html.light .text-emerald-400 { color: #059669 !important; }
+    html.light .bg-emerald-500\/10 { background-color: #d1fae5 !important; }
+    html.light .border-emerald-500\/20 { border-color: #a7f3d0 !important; }
+
+    html.light .text-amber-400, html.light .text-amber-300 { color: #b45309 !important; }
+    html.light .bg-amber-500\/10 { background-color: #fef3c7 !important; }
+    html.light .border-amber-500\/20, html.light .border-amber-500\/30 { border-color: #fde68a !important; }
+
+    html.light .text-rose-400 { color: #e11d48 !important; }
+    html.light .bg-rose-500\/10 { background-color: #ffe4e6 !important; }
+    html.light .border-rose-500\/20 { border-color: #fecdd3 !important; }
+
+    /* Question Input in Day Mode */
+    html.light #query-input {
+      background-color: #f8fafc !important;
+      border: 1.5px solid #cbd5e1 !important;
+      color: #0f172a !important;
+      font-size: 0.925rem !important;
+      font-weight: 500 !important;
+    }
+    html.light #query-input::placeholder {
+      color: #64748b !important;
+    }
+    html.light #query-input:focus {
+      background-color: #ffffff !important;
+      border-color: #0284c7 !important;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+    }
+
+    /* Submit Button */
+    html.light #btn-submit {
+      background-color: #0284c7 !important;
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25) !important;
+    }
+    html.light #btn-submit:hover {
+      background-color: #0369a1 !important;
+    }
+
+    /* Grounded Answer Card in Day Mode */
+    html.light #grounded-answer-card {
+      background-color: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.light #answer-text {
+      color: #0f172a !important;
+      font-size: 1rem !important;
+      line-height: 1.7 !important;
+    }
+    html.light #key-points-list li {
+      color: #1e293b !important;
+    }
+
+    /* Evidence Cards in Day Mode */
+    html.light #evidence-cards-container > div {
+      background-color: #f8fafc !important;
+      border: 1.5px solid #e2e8f0 !important;
+    }
+    html.light #evidence-cards-container p {
+      background-color: #ffffff !important;
+      color: #1e293b !important;
+      border-left: 3.5px solid #d97706 !important;
+      padding: 0.625rem 0.875rem !important;
+      border-radius: 0 0.375rem 0.375rem 0 !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    }
+
+    /* Document Reader in Day Mode */
+    html.light #reader-body {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+    html.light #reader-body h1,
+    html.light #reader-body h2,
+    html.light #reader-body h3 {
+      color: #0f172a !important;
+    }
+    html.light #reader-body p {
+      color: #1e293b !important;
+      line-height: 1.75 !important;
+    }
+    html.light #reader-body strong {
+      color: #0f172a !important;
+    }
+    html.light #reader-body table th {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      border: 1px solid #cbd5e1 !important;
+      font-weight: 700 !important;
+    }
+    html.light #reader-body table td {
+      border: 1px solid #e2e8f0 !important;
+      color: #1e293b !important;
+    }
+    html.light #reader-body table tr:hover {
+      background-color: #f8fafc !important;
+    }
+    html.light mark.glow-amber,
+    html.light .glow-amber mark,
+    html.light mark {
+      background-color: #fef3c7 !important;
+      color: #78350f !important;
+      border-left: 5px solid #d97706 !important;
+      font-weight: 600 !important;
+      padding: 0.75rem 1rem !important;
+      border-radius: 0 0.5rem 0.5rem 0 !important;
+      box-shadow: 0 0 25px -2px rgba(245, 158, 11, 0.35) !important;
+    }
+
+    /* Document Selector Sidebar */
+    html.light #doc-selector-sidebar > div {
+      background-color: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    }
+    html.light #doc-selector-sidebar > div:hover {
+      border-color: #cbd5e1 !important;
+      background-color: #f8fafc !important;
+    }
+    html.light #doc-selector-sidebar > div.bg-brand-950\/40,
+    html.light #doc-selector-sidebar > div.border-brand-500\/50 {
+      background-color: #eff6ff !important;
+      border: 2px solid #2563eb !important;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15) !important;
+    }
+    html.light #doc-selector-sidebar h4 {
+      color: #0f172a !important;
+    }
+
+    /* Modals in Day Mode */
+    html.light #eval-modal > div {
+      background-color: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    }
+    html.light #eval-modal {
+      background-color: rgba(15, 23, 42, 0.6) !important;
+    }
+
+    /* Tables in Evaluation View */
+    html.light table th {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+      font-weight: 700 !important;
+    }
+    html.light table td {
+      border-color: #e2e8f0 !important;
+      color: #1e293b !important;
+    }
+    html.light table tr:hover {
+      background-color: #f8fafc !important;
+    }
+
+    /* Drawers & Collapsible panels */
+    html.light #why-drawer {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    /* Contradiction & Alert banners */
+    html.light #contradiction-banner {
+      background-color: #fffbeb !important;
+      border: 2px solid #fde68a !important;
+    }
+    html.light #contradiction-banner h3 {
+      color: #92400e !important;
+    }
+    html.light #contradiction-banner p {
+      color: #78350f !important;
+    }
+
+    /* Compare card styling in Day Mode */
+    html.light .bg-rose-950\/20 {
+      background-color: #fff1f2 !important;
+      border: 2px solid #fecdd3 !important;
+    }
+    html.light .bg-emerald-950\/20 {
+      background-color: #f0fdf4 !important;
+      border: 2px solid #bbf7d0 !important;
+    }
+
+    /* Code blocks & pre in Day Mode */
+    html.light pre,
+    html.light code:not(.badge):not(.font-semibold) {
+      background-color: #f1f5f9 !important;
+    /* User Documents Module in Day Mode */
+    html.light #user-upload-dropzone {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.light #user-upload-dropzone:hover {
+      background-color: #f0f7ff !important;
+      border-color: #0284c7 !important;
+    }
+    html.light #user-qa-result-box {
+      background-color: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.light #user-qa-answer-text {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.light #user-summary-modal > div,
+    html.light #user-source-modal > div {
+      background-color: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+    }
+    html.light #src-modal-pagetext {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.light #user-docs-table-wrapper table th {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.light #user-docs-table-wrapper table td {
+      border-color: #e2e8f0 !important;
+      color: #1e293b !important;
+    }
+    html.light #collection-summary-modal > div {
+      background-color: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+    }
+    html.light #col-modal-overview,
+    html.light #col-modal-schemes-list > div {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.light #col-modal-metrics-grid > div {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.light #collections-grid > div {
+      background-color: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.light #collections-grid > div:hover {
+      background-color: #f8fafc !important;
+      border-color: #0284c7 !important;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1) !important;
+    }
+    html.light #collections-grid h4 {
+      color: #0f172a !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
+
+  <!-- TOP HEADER / NAV -->
+  <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo & Branding -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('ask')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+          <i data-lucide="scan-search" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-xl tracking-tight text-white">LocalLens</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 font-mono font-medium">Gemma 4</span>
+          </div>
+          <p class="text-xs text-slate-400 hidden sm:block">Ask locally. Get answers you can verify.</p>
+        </div>
+      </div>
+
+      <!-- Live KB Stats & Judge Demo Button -->
+      <div class="flex items-center space-x-3">
+        <div class="hidden md:flex items-center space-x-2 bg-slate-850 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span><strong>10</strong> Official GRs</span>
+          <span class="text-slate-600">•</span>
+          <span><strong>92</strong> Chunks</span>
+          <span class="text-slate-600">•</span>
+          <span>Maharashtra State</span>
+        </div>
+
+        <!-- Day / Night Mode Segmented Switch -->
+        <div id="theme-switcher" class="flex items-center bg-slate-850 border border-slate-700/80 rounded-lg p-0.5 text-xs shadow-sm">
+          <button id="btn-theme-day" onclick="setSpecificTheme('light')" class="px-2.5 py-1 rounded-md flex items-center space-x-1 transition font-medium cursor-pointer" title="Switch to Day Mode">
+            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+            <span class="hidden sm:inline">Day</span>
+          </button>
+          <button id="btn-theme-night" onclick="setSpecificTheme('dark')" class="px-2.5 py-1 rounded-md flex items-center space-x-1 transition font-medium cursor-pointer" title="Switch to Night Mode">
+            <i data-lucide="moon" class="w-3.5 h-3.5 text-indigo-400"></i>
+            <span class="hidden sm:inline">Night</span>
+          </button>
+        </div>
+
+        <button onclick="switchTab('demo')" class="flex items-center space-x-1.5 px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-semibold text-xs rounded-lg shadow-md transition transform hover:-translate-y-0.5">
+          <i data-lucide="zap" class="w-3.5 h-3.5 fill-current"></i>
+          <span>Judge Demo Mode (90s)</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SUB-NAVIGATION BAR (TABS) -->
+    <div class="subnav-bar border-t border-slate-800/60 bg-slate-900/60 overflow-x-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 py-1.5 text-xs font-medium">
+        <button onclick="switchTab('ask')" id="nav-ask" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-white bg-slate-800 active-tab">
+          <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+          <span>Ask</span>
+        </button>
+        <button onclick="switchTab('viewer')" id="nav-viewer" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+          <span>Sources & Document Viewer</span>
+        </button>
+        <button onclick="switchTab('search')" id="nav-search" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i>
+          <span>Search</span>
+        </button>
+        <button onclick="switchTab('compare')" id="nav-compare" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="scale" class="w-3.5 h-3.5"></i>
+          <span>General AI vs LocalLens</span>
+        </button>
+        <button onclick="switchTab('eval')" id="nav-eval" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+          <span>Evaluation & Benchmarks (50Q)</span>
+        </button>
+        <button onclick="switchTab('collections')" id="nav-collections" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+          <span>Collections</span>
+        </button>
+        <button onclick="switchTab('ingest')" id="nav-ingest" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+          <span>AI Document QA & Ingest</span>
+        </button>
+        <button onclick="switchTab('demo')" id="nav-demo" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-slate-400 hover:text-white hover:bg-slate-800/60 text-amber-400">
+          <i data-lucide="play" class="w-3.5 h-3.5"></i>
+          <span>Judge Walkthrough</span>
+        </button>
+        <button onclick="switchTab('about')" id="nav-about" class="tab-btn px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="info" class="w-3.5 h-3.5"></i>
+          <span>About & Philosophy</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: ASK (MAIN CONVERSATIONAL & GROUNDED QA) -->
+    <!-- ========================================== -->
+    <div id="view-ask" class="space-y-6">
+      
+      <!-- Hero Banner -->
+      <div class="hero-banner bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+        <div class="max-w-3xl space-y-2 relative z-10">
+          <div class="hero-badge inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            <span>Zero-Hallucination Policy Active</span>
+          </div>
+          <h1 class="hero-title text-2xl sm:text-3xl font-bold tracking-tight text-white">Ask Your Local Knowledge Base</h1>
+          <p class="hero-desc text-sm text-slate-300 leading-relaxed">
+            Every answer is verified against official Maharashtra Government Resolutions (GRs). If the knowledge base doesn't contain verifiable proof, the system will explicitly say so.
+          </p>
+        </div>
+      </div>
+
+      <!-- Question Input Form -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg space-y-4">
+        
+        <!-- Preset Questions Pills -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+            <span>Try authoritative local test cases:</span>
+            <span class="text-slate-500">Multilingual • Edge Cases • Refusal Tests</span>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button onclick="setQuery('What is the annual income limit for the EBC scholarship in Maharashtra?')" class="pill-btn pill-default">
+              🎓 EBC Scholarship Income Cap
+            </button>
+            <button onclick="setQuery('Can a student admitted through Management Quota apply for the EBC Scholarship?')" class="pill-btn pill-default">
+              🚫 Management Quota Disqualification
+            </button>
+            <button onclick="setQuery('Can a student from Nashik apply for Dr. Punjabrao Deshmukh hostel allowance?')" class="pill-btn pill-default">
+              📍 Nashik Student Eligibility (Tier 1)
+            </button>
+            <button onclick="setQuery('मुख्यमंत्री माझी लाडकी बहीण योजनेसाठी वयाची अट काय आहे?')" class="pill-btn pill-marathi">
+              🇮🇳 मराठी: लाडकी बहीण वयोमर्यादा
+            </button>
+            <button onclick="setQuery('What was the application deadline in the June 2024 order of Ladki Bahin Yojna vs current resolution?')" class="pill-btn pill-amber">
+              ⚡ Contradiction Test: v1 vs v2
+            </button>
+            <button onclick="setQuery('Does Maharashtra offer a free Tesla electric vehicle scheme for agricultural pump owners?')" class="pill-btn pill-rose">
+              🛡️ Zero-Hallucination Refusal Test
+            </button>
+          </div>
+        </div>
+
+        <!-- Input Box -->
+        <form onsubmit="handleQuerySubmit(event)" class="relative flex items-center">
+          <input 
+            type="text" 
+            id="query-input" 
+            placeholder="Ask a specific question about Maharashtra schemes, eligibility, documents, or deadlines..."
+            class="w-full bg-slate-950 border border-slate-750 rounded-xl px-4 py-3.5 pr-28 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition"
+            required
+          />
+          <div class="absolute right-2 flex items-center space-x-1.5">
+            <button type="submit" id="btn-submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-medium text-xs rounded-lg transition flex items-center space-x-1.5 shadow-sm">
+              <span>Ask LocalLens</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </form>
+
+        <!-- Filters Drawer (Expandable) -->
+        <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+          <div class="flex items-center space-x-3">
+            <span class="flex items-center space-x-1">
+              <i data-lucide="cpu" class="w-3.5 h-3.5 text-brand-400"></i>
+              <span>Model: <strong>Gemma 4 (Open-Weight)</strong></span>
+            </span>
+            <span class="text-slate-600">•</span>
+            <span>Retrieval: <strong>Hybrid (BM25 + Dense RRF)</strong></span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <select id="filter-category" class="bg-slate-800 border border-slate-700 text-slate-300 rounded px-2 py-1 text-xs focus:outline-none">
+              <option value="">All Categories</option>
+              <option value="Education">Education</option>
+              <option value="Women & Child">Women & Child</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Social Welfare">Social Welfare</option>
+              <option value="Citizen Services">Citizen Services</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Loading State -->
+      <div id="query-loading" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-4">
+        <div class="w-12 h-12 rounded-full border-2 border-brand-500 border-t-transparent animate-spin mx-auto"></div>
+        <div class="space-y-1">
+          <h3 class="text-sm font-semibold text-white">Retrieving Official Documents & Verifying Grounding...</h3>
+          <p class="text-xs text-slate-400">Scanning 92 structure-aware chunks across 10 official Government Resolutions...</p>
+        </div>
+      </div>
+
+      <!-- Response Container -->
+      <div id="query-response-container" class="hidden space-y-6">
+        
+        <!-- Contradiction Banner (Shown if contradictions detected) -->
+        <div id="contradiction-banner" class="hidden bg-amber-950/60 border border-amber-600/60 rounded-xl p-4 space-y-3">
+          <div class="flex items-start space-x-3">
+            <div class="p-2 rounded-lg bg-amber-500/20 text-amber-400 mt-0.5">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+            <div class="space-y-1 flex-1">
+              <h4 class="text-sm font-bold text-amber-300 flex items-center space-x-2">
+                <span>Conflicting Official Resolutions Detected</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-200 font-mono">Real-world RAG Maturity</span>
+              </h4>
+              <p id="contradiction-desc" class="text-xs text-amber-200/90 leading-relaxed"></p>
+            </div>
+          </div>
+
+          <!-- Comparison Cards for Sources -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
+            <div class="bg-slate-950/70 border border-amber-800/40 rounded-lg p-3 space-y-1.5">
+              <div class="flex items-center justify-between text-amber-400 font-semibold">
+                <span id="conflict-source-a-title"></span>
+                <span id="conflict-source-a-badge" class="px-1.5 py-0.5 bg-rose-500/20 text-rose-300 rounded text-[10px]">Outdated / Superseded</span>
+              </div>
+              <p id="conflict-source-a-excerpt" class="text-slate-300 italic"></p>
+            </div>
+            <div class="bg-slate-950/70 border border-emerald-800/40 rounded-lg p-3 space-y-1.5">
+              <div class="flex items-center justify-between text-emerald-400 font-semibold">
+                <span id="conflict-source-b-title"></span>
+                <span id="conflict-source-b-badge" class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded text-[10px]">Current Resolution</span>
+              </div>
+              <p id="conflict-source-b-excerpt" class="text-slate-300 italic"></p>
+            </div>
+          </div>
+
+          <div class="bg-amber-900/30 border border-amber-800/40 rounded-lg p-2.5 text-xs text-amber-200 flex items-center space-x-2">
+            <i data-lucide="info" class="w-4 h-4 text-amber-400 flex-shrink-0"></i>
+            <span id="conflict-guidance"></span>
+          </div>
+        </div>
+
+        <!-- Strict Abstention Banner (Shown if answerable = false) -->
+        <div id="abstention-banner" class="hidden bg-rose-950/40 border border-rose-800/60 rounded-xl p-5 space-y-3">
+          <div class="flex items-start space-x-3">
+            <div class="p-2 rounded-lg bg-rose-500/20 text-rose-400 mt-0.5">
+              <i data-lucide="shield-alert" class="w-5 h-5"></i>
+            </div>
+            <div class="space-y-1 flex-1">
+              <h4 class="text-sm font-bold text-rose-300 flex items-center space-x-2">
+                <span>Disciplined Abstention: Insufficient Official Evidence</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-200 font-mono">Zero Hallucination Guaranteed</span>
+              </h4>
+              <p id="abstention-msg" class="text-xs text-slate-300 leading-relaxed"></p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
+            <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3 space-y-1">
+              <span class="font-semibold text-slate-400 flex items-center space-x-1.5">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-brand-400"></i>
+                <span>What I Found in Nearby Knowledge:</span>
+              </span>
+              <ul id="abstention-found-list" class="list-disc list-inside text-slate-300 space-y-1"></ul>
+            </div>
+            <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3 space-y-1">
+              <span class="font-semibold text-rose-400 flex items-center space-x-1.5">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+                <span>What is Missing:</span>
+              </span>
+              <ul id="abstention-missing-list" class="list-disc list-inside text-slate-300 space-y-1"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grounded Answer Card -->
+        <div id="grounded-answer-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+          
+          <!-- Answer Header & Badges -->
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+            <div class="flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+                A
+              </div>
+              <h3 class="text-base font-bold text-white tracking-tight">Verified Grounded Answer</h3>
+            </div>
+            
+            <div class="flex items-center space-x-2 text-xs">
+              <span id="badge-grounding" class="px-2.5 py-1 rounded-full font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center space-x-1">
+                <i data-lucide="check" class="w-3 h-3"></i>
+                <span id="grounding-text">Grounding: Strong</span>
+              </span>
+              <span id="badge-status" class="px-2.5 py-1 rounded-full font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                🟢 Current
+              </span>
+              <span id="badge-latency" class="px-2.5 py-1 rounded-full font-mono text-[11px] bg-slate-800 text-slate-400 border border-slate-700">
+                42 ms
+              </span>
+            </div>
+          </div>
+
+          <!-- Answer Body -->
+          <div class="space-y-3">
+            <p id="answer-text" class="text-slate-100 text-base leading-relaxed font-normal"></p>
+            
+            <!-- Key Points Bullet List -->
+            <div id="key-points-container" class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 space-y-2">
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+                <i data-lucide="list-checks" class="w-3.5 h-3.5 text-brand-400"></i>
+                <span>Key Official Takeaways</span>
+              </div>
+              <ul id="key-points-list" class="space-y-1.5 text-xs text-slate-300 list-disc list-inside"></ul>
+            </div>
+          </div>
+
+          <!-- Why / Reasoning Section -->
+          <div class="border-t border-slate-800/80 pt-4 space-y-2">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+              <i data-lucide="git-branch" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>WHY: Grounded Legal Rationale</span>
+            </div>
+            <p id="why-text" class="text-xs text-slate-300 bg-slate-950/40 border border-slate-800 rounded-lg p-3 leading-relaxed"></p>
+          </div>
+
+          <!-- NON-NEGOTIABLE EVIDENCE CARDS -->
+          <div class="border-t border-slate-800/80 pt-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
+                <i data-lucide="book-open" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Evidence Used & Cited Passages</span>
+              </div>
+              <span class="text-xs text-slate-500 font-mono">1-Click Page Jump Available</span>
+            </div>
+
+            <!-- Evidence Cards Container -->
+            <div id="evidence-cards-container" class="grid grid-cols-1 gap-3">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- "Why This Answer?" Expandable Drawer Button -->
+          <div class="border-t border-slate-800/80 pt-4 flex items-center justify-between text-xs">
+            <button onclick="toggleWhyDrawer()" class="text-brand-400 hover:text-brand-300 flex items-center space-x-1.5 font-medium transition">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+              <span>Why this answer? (Inspect RAG telemetry)</span>
+              <i data-lucide="chevron-down" id="why-chevron" class="w-3 h-3 transition-transform"></i>
+            </button>
+            <span class="text-slate-500 font-mono text-[11px]">Gemma 4 Structured Reasoner</span>
+          </div>
+
+          <!-- Expandable Telemetry Drawer -->
+          <div id="why-drawer" class="hidden bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs space-y-3">
+            <div class="space-y-1">
+              <div class="font-semibold text-slate-300">1. Retrieved Documents & Relevance</div>
+              <div id="telemetry-docs" class="text-slate-400"></div>
+            </div>
+            <div class="space-y-1">
+              <div class="font-semibold text-slate-300">2. Zero-Hallucination Verification</div>
+              <div class="text-slate-400">Strict grounding policy confirmed. All numeric thresholds, dates, and entitlement limits were extracted directly from indexed Government Resolutions. General pre-training memory filling was inhibited.</div>
+            </div>
+          </div>
+
+          <!-- Related Questions -->
+          <div class="border-t border-slate-800/80 pt-4 space-y-2">
+            <div class="text-xs font-semibold text-slate-400">You may also want to know:</div>
+            <div id="related-questions-container" class="flex flex-wrap gap-2 text-xs">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: SOURCES & INTEGRATED DOCUMENT VIEWER -->
+    <!-- ========================================== -->
+    <div id="view-viewer" class="hidden space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-white">Official Document Archive & Viewer</h2>
+          <p class="text-xs text-slate-400">Browse authenticated Maharashtra Government Resolutions with page-level inspection and evidence glow.</p>
+        </div>
+        <div class="flex items-center space-x-2 text-xs">
+          <span class="px-2.5 py-1 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg">10 Government Resolutions</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Document Selector Sidebar (4 Cols) -->
+        <div class="lg:col-span-4 space-y-2 max-h-[750px] overflow-y-auto pr-1" id="doc-selector-sidebar">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Document Reader Screen (8 Cols) -->
+        <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col min-h-[750px] shadow-xl overflow-hidden">
+          
+          <!-- Reader Header -->
+          <div class="border-b border-slate-800 bg-slate-850 p-4 space-y-2">
+            <div class="flex items-start justify-between gap-4">
+              <div class="space-y-0.5">
+                <h3 id="reader-title" class="text-base font-bold text-white leading-snug">Select a document to inspect</h3>
+                <p id="reader-dept" class="text-xs text-slate-400"></p>
+              </div>
+              <div class="flex items-center space-x-2 flex-shrink-0">
+                <span id="reader-status-badge" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">🟢 Current</span>
+                <span id="reader-version-badge" class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-800 text-slate-300 border border-slate-700">v1.0</span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs pt-2 border-t border-slate-800/60 text-slate-400">
+              <div class="flex items-center space-x-3">
+                <span id="reader-gr-number"></span>
+                <span>•</span>
+                <span id="reader-published-date"></span>
+              </div>
+              <a id="reader-source-link" href="#" target="_blank" class="text-brand-400 hover:text-brand-300 flex items-center space-x-1">
+                <span>Official Source PDF</span>
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Page Navigation Bar -->
+          <div class="bg-slate-950 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2">
+              <button onclick="prevDocPage()" id="btn-prev-page" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 text-slate-200 rounded border border-slate-700 transition flex items-center space-x-1">
+                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                <span>Previous</span>
+              </button>
+              <button onclick="nextDocPage()" id="btn-next-page" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 text-slate-200 rounded border border-slate-700 transition flex items-center space-x-1">
+                <span>Next</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            <div class="font-mono text-slate-300">
+              <span id="reader-current-page">Page 1</span> / <span id="reader-total-pages">Page 4</span>
+            </div>
+
+            <div class="text-[11px] text-slate-500 hidden sm:block">
+              Evidence highlighted in <span class="text-amber-400 font-semibold">Amber</span>
+            </div>
+          </div>
+
+          <!-- Page Content Reader -->
+          <div class="flex-1 p-6 overflow-y-auto bg-slate-900/60 font-sans text-sm text-slate-200 leading-relaxed space-y-4" id="reader-body">
+            <!-- Rendered Markdown Page -->
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: SEARCH -->
+    <!-- ========================================== -->
+    <div id="view-search" class="hidden space-y-6">
+      
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white">Search Knowledge Base</h2>
+        <p class="text-xs text-slate-400">Direct BM25 + Semantic Hybrid search across all government resolution texts, tables, and clauses.</p>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+        <form onsubmit="handleDirectSearch(event)" class="relative flex items-center">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search keywords: e.g., 'Tahsildar income certificate', '7.5 HP', '50,000', 'lottery'..." 
+            class="w-full bg-slate-950 border border-slate-750 rounded-xl px-4 py-3.5 pr-28 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition"
+            required
+          />
+          <button type="submit" class="absolute right-2 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-medium text-xs rounded-lg transition flex items-center space-x-1.5">
+            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            <span>Search</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Search Results Container -->
+      <div id="search-results-container" class="space-y-3">
+        <div class="text-center py-12 text-slate-500 text-xs">
+          Enter a keyword or phrase above to query the Maharashtra Government archive.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: GENERAL AI VS LOCALLENS -->
+    <!-- ========================================== -->
+    <div id="view-compare" class="hidden space-y-6">
+      
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white">General AI vs. LocalLens Side-by-Side Audit</h2>
+        <p class="text-xs text-slate-400">Concrete proof: Why general LLMs fail or hallucinate on local government policies, while LocalLens retrieves the exact gazetted resolution.</p>
+      </div>
+
+      <!-- Comparison Selector -->
+      <div class="flex flex-wrap gap-2 text-xs">
+        <button onclick="runComparisonTest('Can a student admitted through Management Quota apply for the EBC Scholarship in Maharashtra?')" class="px-3 py-2 bg-slate-800 hover:bg-slate-750 rounded-lg text-slate-200 border border-slate-700 transition">
+          Test 1: Management Quota Disqualification
+        </button>
+        <button onclick="runComparisonTest('What is the annual family income limit for the Rajarshi Shahu EBC Scholarship?')" class="px-3 py-2 bg-slate-800 hover:bg-slate-750 rounded-lg text-slate-200 border border-slate-700 transition">
+          Test 2: EBC Income Threshold
+        </button>
+        <button onclick="runComparisonTest('What is the age limit and ration card rule for Mukhyamantri Majhi Ladki Bahin Yojna?')" class="px-3 py-2 bg-slate-800 hover:bg-slate-750 rounded-lg text-slate-200 border border-slate-700 transition">
+          Test 3: Ladki Bahin Age & Ration Exemption
+        </button>
+      </div>
+
+      <!-- Comparison Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Generic LLM Card -->
+        <div class="bg-slate-900 border border-rose-900/40 rounded-2xl p-5 space-y-4 relative overflow-hidden">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+              <span class="font-bold text-sm text-white">Generic Pre-Trained LLM</span>
+            </div>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 font-mono">Un-grounded General Model</span>
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-xs font-semibold text-slate-400">Response:</div>
+            <p id="compare-generic-answer" class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-lg border border-slate-800">
+              Click any comparison test above to run live side-by-side audit.
+            </p>
+          </div>
+
+          <div class="space-y-1.5 text-xs">
+            <div class="text-slate-400 font-semibold">Citations:</div>
+            <div id="compare-generic-citation" class="text-rose-400 font-mono text-[11px]">None (General probabilistic memory)</div>
+          </div>
+
+          <div class="bg-rose-950/30 border border-rose-900/50 rounded-lg p-3 text-xs text-rose-300 space-y-1">
+            <div class="font-bold flex items-center space-x-1">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+              <span>The Hallucination Danger:</span>
+            </div>
+            <div id="compare-generic-risk" class="text-slate-300 text-[11px]">
+              General models invent rules or confuse state policies from Karnataka, UP, or central guidelines.
+            </div>
+          </div>
+        </div>
+
+        <!-- LocalLens Card -->
+        <div class="bg-slate-900 border border-emerald-900/40 rounded-2xl p-5 space-y-4 relative overflow-hidden">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <span class="font-bold text-sm text-white">LocalLens (Gemma 4 + Hybrid RAG)</span>
+            </div>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono">100% Grounded</span>
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-xs font-semibold text-slate-400">Verified Answer:</div>
+            <p id="compare-locallens-answer" class="text-xs text-slate-200 leading-relaxed bg-slate-950 p-3 rounded-lg border border-slate-800 font-medium">
+              Click any comparison test above to inspect.
+            </p>
+          </div>
+
+          <div class="space-y-1.5 text-xs">
+            <div class="text-slate-400 font-semibold">Official Source Citation:</div>
+            <div id="compare-locallens-citation" class="text-emerald-400 font-mono text-[11px]">Exact Government Resolution + Page</div>
+          </div>
+
+          <div class="bg-emerald-950/30 border border-emerald-900/50 rounded-lg p-3 text-xs text-emerald-300 space-y-1">
+            <div class="font-bold flex items-center space-x-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+              <span>Why Local Grounding Wins:</span>
+            </div>
+            <div id="compare-locallens-why" class="text-slate-300 text-[11px]">
+              LocalLens retrieves the specific page, section, and statutory clause from the Maharashtra Government gazette.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: EVALUATION & BENCHMARKS (50Q) -->
+    <!-- ========================================== -->
+    <div id="view-eval" class="space-y-6 hidden">
+      
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-white">Live Benchmark Dashboard (50 Questions)</h2>
+          <p class="text-xs text-slate-400">Empirical metrics generated directly from real test executions against the LocalLens engine. Never hardcoded.</p>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+          <button onclick="runLiveBenchmark()" id="btn-run-benchmark" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center space-x-2">
+            <i data-lucide="play-circle" class="w-4 h-4"></i>
+            <span>Run 50-Question Benchmark</span>
+          </button>
+          <button onclick="exportBenchmarkJSON()" class="px-3 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs rounded-xl border border-slate-700 transition">
+            Export JSON
+          </button>
+          <button onclick="exportBenchmarkCSV()" class="px-3 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs rounded-xl border border-slate-700 transition">
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- 6 Metrics Cards Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
+          <span class="text-xs text-slate-400 font-medium">Answer Accuracy</span>
+          <div class="text-2xl font-bold text-white tracking-tight" id="metric-accuracy">94.0%</div>
+          <span class="text-[11px] text-emerald-400">30/30 Answerable correct</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
+          <span class="text-xs text-slate-400 font-medium">Citation Accuracy</span>
+          <div class="text-2xl font-bold text-white tracking-tight" id="metric-citation">100.0%</div>
+          <span class="text-[11px] text-emerald-400">Verifiable Page Cited</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
+          <span class="text-xs text-slate-400 font-medium">Evidence Recall@5</span>
+          <div class="text-2xl font-bold text-white tracking-tight" id="metric-recall">100.0%</div>
+          <span class="text-[11px] text-emerald-400">Target document in Top 5</span>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
+          <span class="text-xs text-slate-400 font-medium">Groundedness Score</span>
+          <div class="text-2xl font-bold text-white tracking-tight" id="metric-groundedness">100.0%</div>
+          <span class="text-[11px] text-emerald-400">Strong/Moderate grounding</span>
+        </div>
+
+        <div class="bg-slate-900 border border-emerald-900/60 rounded-xl p-4 space-y-1 glow-emerald">
+          <span class="text-xs text-emerald-300 font-medium">Hallucination Rate</span>
+          <div class="text-2xl font-bold text-emerald-400 tracking-tight" id="metric-hallucination">0.0%</div>
+          <span class="text-[11px] text-emerald-300 font-semibold">Zero Invented Facts</span>
+        </div>
+
+        <div class="bg-slate-900 border border-emerald-900/60 rounded-xl p-4 space-y-1 glow-emerald">
+          <span class="text-xs text-emerald-300 font-medium">Correct Abstention</span>
+          <div class="text-2xl font-bold text-emerald-400 tracking-tight" id="metric-abstention">100.0%</div>
+          <span class="text-[11px] text-emerald-300">10/10 Refused ungrounded</span>
+        </div>
+
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center space-x-2 text-xs">
+        <span class="text-slate-400">Filter Category:</span>
+        <button onclick="filterEvalCategory('all')" id="btn-eval-all" class="px-3 py-1 bg-slate-800 text-white rounded-md border border-slate-700">All (50)</button>
+        <button onclick="filterEvalCategory('answerable')" id="btn-eval-answerable" class="px-3 py-1 bg-slate-900 text-slate-400 rounded-md border border-slate-800 hover:text-white">Answerable (30)</button>
+        <button onclick="filterEvalCategory('unanswerable')" id="btn-eval-unanswerable" class="px-3 py-1 bg-slate-900 text-slate-400 rounded-md border border-slate-800 hover:text-white">Unanswerable Refusal (10)</button>
+        <button onclick="filterEvalCategory('ambiguous')" id="btn-eval-ambiguous" class="px-3 py-1 bg-slate-900 text-slate-400 rounded-md border border-slate-800 hover:text-white">Ambiguous / Contradiction (5)</button>
+        <button onclick="filterEvalCategory('multilingual')" id="btn-eval-multilingual" class="px-3 py-1 bg-slate-900 text-slate-400 rounded-md border border-slate-800 hover:text-white">Multilingual (5)</button>
+      </div>
+
+      <!-- Question-by-Question Results Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="max-h-[550px] overflow-y-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-850 text-slate-300 sticky top-0 border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-4 font-semibold">ID</th>
+                <th class="py-3 px-4 font-semibold">Question</th>
+                <th class="py-3 px-4 font-semibold">Category</th>
+                <th class="py-3 px-4 font-semibold">Answerable</th>
+                <th class="py-3 px-4 font-semibold">Outcome</th>
+                <th class="py-3 px-4 font-semibold">Latency</th>
+                <th class="py-3 px-4 font-semibold text-right">Inspect</th>
+              </tr>
+            </thead>
+            <tbody id="eval-table-body" class="divide-y divide-slate-800/60 font-sans text-slate-200">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 6: COLLECTIONS -->
+    <!-- ========================================== -->
+    <div id="view-collections" class="hidden space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white">Collections Explorer</h2>
+        <p class="text-xs text-slate-400">Explore domain knowledge across Maharashtra Government administrative departments.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="collections-grid">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 7: AI DOCUMENT UPLOAD & QUESTION ANSWERING -->
+    <!-- ========================================== -->
+    <div id="view-ingest" class="hidden space-y-6">
+      
+      <!-- Feature Header Banner -->
+      <div class="hero-banner bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+          <div class="max-w-3xl space-y-2">
+            <div class="hero-badge inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold">
+              <i data-lucide="file-up" class="w-3.5 h-3.5"></i>
+              <span>AI Document Upload & Grounded Q&A</span>
+            </div>
+            <h2 class="text-2xl font-bold tracking-tight text-white">Ask Your Uploaded Documents</h2>
+            <p class="hero-desc text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Upload single or multiple PDF documents (supports digital text extraction and automatic page-by-page OCR for scanned pages). Ask questions grounded strictly in your files with page citations, view extracted source passages, and explore automated executive summaries.
+            </p>
+          </div>
+          <div class="flex sm:flex-col items-center sm:items-end justify-between gap-2 shrink-0">
+            <div class="text-[11px] text-slate-400 font-mono bg-slate-950/70 border border-slate-800 rounded-lg px-2.5 py-1 flex items-center space-x-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Session: <strong id="user-session-label" class="text-slate-200">session-default</strong></span>
+            </div>
+            <button onclick="resetUserSession()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 text-slate-300 text-[11px] rounded-lg transition border border-slate-700/60 flex items-center space-x-1">
+              <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+              <span>New Session / Clear</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Alert Banner -->
+      <div id="user-doc-error-box" class="hidden bg-rose-950/40 border border-rose-500/50 rounded-xl p-4 text-xs text-rose-200 flex items-start space-x-3">
+        <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-400 shrink-0 mt-0.5"></i>
+        <div class="flex-1">
+          <div class="font-bold text-rose-300 text-sm">Document Processing Error</div>
+          <div id="user-doc-error-message" class="mt-0.5 leading-relaxed"></div>
+        </div>
+        <button onclick="document.getElementById('user-doc-error-box').classList.add('hidden')" class="text-rose-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Upload Zone Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i data-lucide="upload" class="w-4 h-4 text-brand-400"></i>
+              <span>Upload PDF Documents</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Select or drag & drop one or multiple PDFs. Digital and scanned pages are automatically handled.</p>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 font-mono">Multi-PDF • Auto-OCR</span>
+        </div>
+
+        <!-- Drag & Drop Dropzone -->
+        <div 
+          id="user-upload-dropzone"
+          onclick="document.getElementById('user-doc-file-input').click()"
+          ondragover="handleUserDragOver(event)"
+          ondragleave="handleUserDragLeave(event)"
+          ondrop="handleUserDrop(event)"
+          class="border-2 border-dashed border-slate-750 hover:border-brand-500/70 bg-slate-950/60 rounded-xl p-8 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-3 group"
+        >
+          <input 
+            type="file" 
+            id="user-doc-file-input" 
+            multiple 
+            accept=".pdf" 
+            class="hidden" 
+            onchange="handleUserPdfUpload(event)"
+          />
+          <div class="w-12 h-12 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center group-hover:scale-110 transition shadow-inner">
+            <i data-lucide="file-plus" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-slate-200">
+              Drag & Drop PDF files here, or <span class="text-brand-400 underline decoration-dotted">Browse from device</span>
+            </p>
+            <p class="text-xs text-slate-500 mt-1">
+              Supports multiple documents • Selectable digital text & scanned image pages • Windows Native OCR
+            </p>
+          </div>
+        </div>
+
+        <!-- Progress Stepper (6-Stages) -->
+        <div id="user-upload-progress" class="hidden bg-slate-950/90 border border-slate-800 rounded-xl p-5 space-y-4">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-2">
+              <div class="w-4 h-4 rounded-full border-2 border-brand-500 border-t-transparent animate-spin"></div>
+              <span id="user-progress-file-name" class="font-semibold text-white">Processing Document...</span>
+            </div>
+            <span id="user-progress-percentage" class="font-mono text-brand-400 font-bold">0%</span>
+          </div>
+
+          <!-- Progress Bar Track -->
+          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div id="user-progress-bar" class="bg-gradient-to-r from-brand-500 to-indigo-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+
+          <!-- 6 Workflow Stage Badges -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-[11px] pt-1">
+            <div id="prog-step-1" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 text-center font-medium">
+              <span class="block text-[10px] opacity-75">Stage 1</span>
+              <span>Uploading...</span>
+            </div>
+            <div id="prog-step-2" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 text-center font-medium">
+              <span class="block text-[10px] opacity-75">Stage 2</span>
+              <span>Reading PDF...</span>
+            </div>
+            <div id="prog-step-3" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 text-center font-medium">
+              <span class="block text-[10px] opacity-75">Stage 3</span>
+              <span>Checking Scans...</span>
+            </div>
+            <div id="prog-step-4" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 text-center font-medium">
+              <span class="block text-[10px] opacity-75">Stage 4</span>
+              <span>Running OCR...</span>
+            </div>
+            <div id="prog-step-5" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 text-center font-medium">
+              <span class="block text-[10px] opacity-75">Stage 5</span>
+              <span>Indexing Chunks...</span>
+            </div>
+            <div id="prog-step-6" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 text-center font-medium">
+              <span class="block text-[10px] opacity-75">Stage 6</span>
+              <span>Ready ✓</span>
+            </div>
+          </div>
+
+          <p id="user-progress-status-desc" class="text-xs text-slate-400 italic text-center"></p>
+        </div>
+      </div>
+
+      <!-- Uploaded Documents Library Section -->
+      <div id="user-docs-container" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="folder-check" class="w-4 h-4 text-emerald-400"></i>
+            <h3 class="text-sm font-bold text-white">Your Uploaded Documents</h3>
+            <span id="user-docs-count-badge" class="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">0 Documents</span>
+          </div>
+          <span class="text-xs text-slate-400 hidden sm:inline">Per-session isolated knowledge base</span>
+        </div>
+
+        <!-- Documents Table / Empty State -->
+        <div id="user-docs-empty-state" class="text-center py-8 text-slate-400 space-y-2">
+          <i data-lucide="files" class="w-8 h-8 mx-auto text-slate-600"></i>
+          <p class="text-xs">No documents uploaded yet in this session. Upload a PDF above to begin asking questions.</p>
+        </div>
+
+        <div id="user-docs-table-wrapper" class="hidden overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400 bg-slate-950/40">
+                <th class="py-2.5 px-3 font-semibold">Document Name</th>
+                <th class="py-2.5 px-3 font-semibold">Pages</th>
+                <th class="py-2.5 px-3 font-semibold">Extraction Method</th>
+                <th class="py-2.5 px-3 font-semibold">Status</th>
+                <th class="py-2.5 px-3 text-right font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="user-docs-tbody" class="divide-y divide-slate-800/60 font-medium">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Document Question Answering Studio -->
+      <div id="user-qa-studio" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="message-square-text" class="w-4 h-4 text-brand-400"></i>
+            <h3 class="text-sm font-bold text-white">Ask Questions Grounded in Uploaded Documents</h3>
+          </div>
+          
+          <!-- Document Filter / Target Selector -->
+          <div class="flex items-center space-x-2 text-xs">
+            <label class="text-slate-400 font-medium">Query Target:</label>
+            <select id="user-qa-doc-filter" class="bg-slate-950 border border-slate-750 text-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-brand-500">
+              <option value="all">All Uploaded Documents</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Preset Test Pills -->
+        <div class="space-y-1.5">
+          <div class="text-[11px] text-slate-400 font-medium flex items-center justify-between">
+            <span>Quick document queries:</span>
+            <span class="text-slate-500">Rules • Dates • Key Points • Strict Refusal</span>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button onclick="setUserQuery('What are the main rules, criteria, and conditions specified in this document?')" class="pill-btn pill-default">
+              📜 Rules & Conditions
+            </button>
+            <button onclick="setUserQuery('What are the important dates, deadlines, or timelines mentioned?')" class="pill-btn pill-default">
+              📅 Important Dates & Deadlines
+            </button>
+            <button onclick="setUserQuery('Summarize the primary benefits, fees, and financial terms in this document.')" class="pill-btn pill-default">
+              💰 Financial & Fee Terms
+            </button>
+            <button onclick="setUserQuery('What are the key points and takeaways from this document?')" class="pill-btn pill-default">
+              🎯 Key Takeaways
+            </button>
+            <button onclick="setUserQuery('Does this document specify any provisions for international space missions?')" class="pill-btn pill-rose">
+              🛡️ Zero-Hallucination Refusal Test
+            </button>
+          </div>
+        </div>
+
+        <!-- Query Form -->
+        <form onsubmit="handleUserDocQuerySubmit(event)" class="relative flex items-center">
+          <input 
+            type="text" 
+            id="user-qa-input" 
+            placeholder="Ask a specific question about your uploaded document(s)..."
+            class="w-full bg-slate-950 border border-slate-750 rounded-xl px-4 py-3.5 pr-32 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition"
+            required
+          />
+          <div class="absolute right-2 flex items-center space-x-1.5">
+            <button type="submit" id="btn-user-qa-submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-medium text-xs rounded-lg transition flex items-center space-x-1.5 shadow-sm">
+              <span>Ask Document</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </form>
+
+        <!-- Loading Spinner -->
+        <div id="user-qa-loading" class="hidden bg-slate-950/70 border border-slate-800 rounded-xl p-6 text-center space-y-2">
+          <div class="w-8 h-8 rounded-full border-2 border-brand-500 border-t-transparent animate-spin mx-auto"></div>
+          <p class="text-xs text-slate-300 font-medium">Retrieving passages and verifying facts against uploaded pages...</p>
+        </div>
+
+        <!-- Grounded Answer Result Card -->
+        <div id="user-qa-result-box" class="hidden bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-4 shadow-md">
+          
+          <!-- Answer Header & Grounding Badge -->
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div id="user-qa-status-badge" class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold">
+              <!-- Dynamically populated -->
+            </div>
+            <div class="text-[11px] text-slate-400 font-mono">
+              <span id="user-qa-latency">0 ms</span> • <span id="user-qa-scope-label">All Docs</span>
+            </div>
+          </div>
+
+          <!-- Answer Text -->
+          <div class="space-y-2">
+            <h4 class="text-xs uppercase tracking-wider font-bold text-slate-400">Grounded Answer</h4>
+            <div id="user-qa-answer-text" class="text-sm text-slate-100 leading-relaxed whitespace-pre-line bg-slate-900/60 p-4 rounded-lg border border-slate-800">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Source Citations Container -->
+          <div id="user-qa-citations-section" class="space-y-2 pt-2 border-t border-slate-800/80">
+            <h4 class="text-xs uppercase tracking-wider font-bold text-slate-400 flex items-center space-x-1.5">
+              <i data-lucide="book-open" class="w-3.5 h-3.5 text-brand-400"></i>
+              <span>Source Citations & Extracted Passages</span>
+            </h4>
+            <div id="user-qa-citations-list" class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Collapsible Section: Manual Policy Ingestion Pipeline (Advanced) -->
+      <details class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-lg group">
+        <summary class="cursor-pointer text-xs font-bold text-slate-300 hover:text-white flex items-center justify-between select-none">
+          <span class="flex items-center space-x-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-slate-400"></i>
+            <span>Manual Text & Official Policy Ingestion Pipeline (Advanced)</span>
+          </span>
+          <span class="text-[11px] text-slate-500 font-mono group-open:rotate-180 transition">▼</span>
+        </summary>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-4 pt-4 border-t border-slate-800/80">
+          <!-- Form (6 cols) -->
+          <div class="lg:col-span-6 space-y-3">
+            <h4 class="text-xs font-bold text-slate-200">Register Official Resolution / Policy Guidelines</h4>
+            <form onsubmit="handleIngestSubmit(event)" class="space-y-3 text-xs">
+              <div>
+                <label class="block text-slate-400 mb-1">Document Title</label>
+                <input type="text" id="ingest-title" required placeholder="e.g., Maharashtra Electric Vehicle Policy 2025" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200">
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-slate-400 mb-1">Department</label>
+                  <input type="text" id="ingest-dept" required placeholder="e.g., Transport Department" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200">
+                </div>
+                <div>
+                  <label class="block text-slate-400 mb-1">Category</label>
+                  <select id="ingest-cat" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200">
+                    <option value="Education">Education</option>
+                    <option value="Agriculture">Agriculture</option>
+                    <option value="Women & Child">Women & Child</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Citizen Services">Citizen Services</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-slate-400 mb-1">Publication Date</label>
+                  <input type="date" id="ingest-date" required value="2025-01-15" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200">
+                </div>
+                <div>
+                  <label class="block text-slate-400 mb-1">Version</label>
+                  <input type="text" id="ingest-ver" value="v1.0" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-slate-400 mb-1">Document Content (Text or Markdown with &lt;!-- PAGE: X --&gt; markers)</label>
+                <textarea id="ingest-text" rows="6" placeholder="Paste official text or policy guidelines here..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 font-mono text-[11px]"></textarea>
+              </div>
+
+              <button type="submit" id="btn-ingest" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg transition">
+                Process & Index Document
+              </button>
+            </form>
+          </div>
+
+          <!-- Telemetry Tracker (6 cols) -->
+          <div class="lg:col-span-6 space-y-3">
+            <h4 class="text-xs font-bold text-slate-200 flex items-center space-x-2">
+              <span>Ingestion Pipeline Telemetry</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 font-mono">6 Stages</span>
+            </h4>
+            <div id="ingest-telemetry-steps" class="space-y-2 text-xs">
+              <div class="border border-slate-800 bg-slate-950/40 rounded-xl p-2.5 flex items-start space-x-2.5">
+                <div class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[10px] mt-0.5">1</div>
+                <div>
+                  <div class="font-semibold text-slate-300">Document Upload & Schema Validation</div>
+                  <div class="text-slate-500 text-[11px]">Validates metadata schema, file integrity, and date formatting.</div>
+                </div>
+              </div>
+              <div class="border border-slate-800 bg-slate-950/40 rounded-xl p-2.5 flex items-start space-x-2.5">
+                <div class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[10px] mt-0.5">2</div>
+                <div>
+                  <div class="font-semibold text-slate-300">Text Extraction & Normalization</div>
+                  <div class="text-slate-500 text-[11px]">Normalizes whitespace, cleans line breaks, and sanitizes characters.</div>
+                </div>
+              </div>
+              <div class="border border-slate-800 bg-slate-950/40 rounded-xl p-2.5 flex items-start space-x-2.5">
+                <div class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[10px] mt-0.5">3</div>
+                <div>
+                  <div class="font-semibold text-slate-300">Page Boundary & Header Parsing</div>
+                  <div class="text-slate-500 text-[11px]">Detects page breaks and document section hierarchy.</div>
+                </div>
+              </div>
+              <div class="border border-slate-800 bg-slate-950/40 rounded-xl p-2.5 flex items-start space-x-2.5">
+                <div class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[10px] mt-0.5">4</div>
+                <div>
+                  <div class="font-semibold text-slate-300">Language Identification</div>
+                  <div class="text-slate-500 text-[11px]">Performs Devanagari script detection and multilingual tagging.</div>
+                </div>
+              </div>
+              <div class="border border-slate-800 bg-slate-950/40 rounded-xl p-2.5 flex items-start space-x-2.5">
+                <div class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[10px] mt-0.5">5</div>
+                <div>
+                  <div class="font-semibold text-slate-300">Structure-Aware Chunking</div>
+                  <div class="text-slate-500 text-[11px]">Preserves table structures and attaches chunk metadata.</div>
+                </div>
+              </div>
+              <div class="border border-slate-800 bg-slate-950/40 rounded-xl p-2.5 flex items-start space-x-2.5">
+                <div class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-[10px] mt-0.5">6</div>
+                <div>
+                  <div class="font-semibold text-slate-300">Embeddings & Hybrid Indexing</div>
+                  <div class="text-slate-500 text-[11px]">Updates Okapi BM25 index and dense term vector space.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 8: JUDGE DEMO MODE (90 SECONDS) -->
+    <!-- ========================================== -->
+    <div id="view-demo" class="hidden space-y-6">
+      
+      <div class="bg-gradient-to-r from-amber-950/60 via-slate-900 to-amber-950/60 border border-amber-600/50 rounded-2xl p-6 shadow-xl space-y-3">
+        <div class="flex items-center space-x-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+          <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
+          <span>Curated 90-Second Judge Walkthrough</span>
+        </div>
+        <h2 class="text-2xl font-bold text-white tracking-tight">The Story of Local Knowledge</h2>
+        <p class="text-sm text-slate-300 leading-relaxed max-w-3xl">
+          «General AI → uncertain about local knowledge <br>
+          ↓ LocalLens → retrieves authoritative local evidence <br>
+          ↓ Gemma 4 → understands and explains it <br>
+          ↓ Source passage → user verifies it <br>
+          ↓ No evidence → system abstains»
+        </p>
+      </div>
+
+      <!-- Stepper Controls -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+        <button onclick="setDemoStage(1)" id="demo-step-1" class="demo-step-btn p-3 rounded-xl bg-amber-500 text-slate-950 font-bold border border-amber-400 text-left transition">
+          <div class="text-[10px] opacity-75">Step 1</div>
+          <div>Local Rule Query</div>
+        </button>
+        <button onclick="setDemoStage(2)" id="demo-step-2" class="demo-step-btn p-3 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-left transition hover:text-white">
+          <div class="text-[10px] opacity-75">Step 2</div>
+          <div>Source Evidence</div>
+        </button>
+        <button onclick="setDemoStage(3)" id="demo-step-3" class="demo-step-btn p-3 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-left transition hover:text-white">
+          <div class="text-[10px] opacity-75">Step 3</div>
+          <div>Page Jump & Highlight</div>
+        </button>
+        <button onclick="setDemoStage(4)" id="demo-step-4" class="demo-step-btn p-3 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-left transition hover:text-white">
+          <div class="text-[10px] opacity-75">Step 4</div>
+          <div>Disciplined Abstention</div>
+        </button>
+        <button onclick="setDemoStage(5)" id="demo-step-5" class="demo-step-btn p-3 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-left transition hover:text-white">
+          <div class="text-[10px] opacity-75">Step 5</div>
+          <div>मराठी Multilingual</div>
+        </button>
+        <button onclick="setDemoStage(6)" id="demo-step-6" class="demo-step-btn p-3 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-left transition hover:text-white">
+          <div class="text-[10px] opacity-75">Step 6</div>
+          <div>Contradiction & Benchmark</div>
+        </button>
+      </div>
+
+      <!-- Current Step Interactive Viewer -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h3 id="demo-stage-title" class="text-base font-bold text-white"></h3>
+          <div class="flex items-center space-x-2">
+            <button onclick="prevDemoStage()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs rounded-lg transition">Previous</button>
+            <button onclick="nextDemoStage()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs rounded-lg transition">Next Step →</button>
+          </div>
+        </div>
+
+        <p id="demo-stage-narration" class="text-xs text-slate-300 leading-relaxed"></p>
+
+        <div id="demo-stage-action-box" class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+          <!-- Populated dynamically -->
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 9: ABOUT & PHILOSOPHY -->
+    <!-- ========================================== -->
+    <div id="view-about" class="hidden space-y-6">
+      
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white">System Architecture & Core Philosophy</h2>
+        <p class="text-xs text-slate-400">Why LocalLens is built for knowledge too local for general models.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-300 leading-relaxed">
+        
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+          <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+            <i data-lucide="compass" class="w-4 h-4 text-brand-400"></i>
+            <span>The Problem Statement</span>
+          </h3>
+          <p>
+            General-purpose AI models are trained on massive web scrapes. When asked about hyper-local government schemes, municipal resolutions, university circulars, or regional language mandates, they frequently:
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-slate-400">
+            <li>Confuse Maharashtra schemes with central schemes or other states.</li>
+            <li>Cite outdated deadlines from initial drafts rather than gazetted revisions.</li>
+            <li>Confidently hallucinate eligibility criteria, causing real hardship to citizens.</li>
+          </ul>
+          <p>
+            LocalLens solves this by treating the LLM strictly as a reasoning interpreter over authenticated local documents.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+          <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+            <i data-lucide="shield" class="w-4 h-4 text-emerald-400"></i>
+            <span>Zero-Hallucination Philosophy</span>
+          </h3>
+          <p>
+            «If the knowledge base doesn't contain the answer, say so.»
+          </p>
+          <p>
+            A disciplined, verifiable refusal: <br>
+            <span class="text-slate-100 font-mono">“I couldn't find this information in the available documents.”</span><br>
+            is mathematically and ethically superior to an ungrounded guess.
+          </p>
+          <p>
+            LocalLens implements an Answerability Gate before generation: calculating entity coverage, contradiction detection, and citation mapping.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Architecture Diagram ASCII / Visual -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+        <h3 class="text-sm font-bold text-white">RAG Architectural Flow</h3>
+        <div class="p-4 bg-slate-950 rounded-xl font-mono text-[11px] text-brand-300 overflow-x-auto leading-relaxed border border-slate-800">
+USER QUESTION ─────────► QUERY PROCESSOR (Language Detect & Cross-Lingual Synonyms)<br>
+                               │<br>
+                               ▼<br>
+                        HYBRID RETRIEVAL<br>
+                      ┌────────┴────────┐<br>
+             BM25 Okapi Multi-script  Dense Term Vector Cosine<br>
+                      └────────┬────────┘<br>
+                               ▼<br>
+                  RECIPROCAL RANK FUSION (RRF)<br>
+                               │<br>
+                               ▼<br>
+                    ANSWERABILITY GATE<br>
+                    ├── Relevance & Entity Coverage<br>
+                    └── Contradiction Detector (v1 vs v2 resolutions)<br>
+                               │<br>
+                 ┌─────────────┴─────────────┐<br>
+                 ▼                           ▼<br>
+        [INSUFFICIENT EVIDENCE]     [SUFFICIENT EVIDENCE]<br>
+                 │                           │<br>
+                 ▼                           ▼<br>
+        DISCIPLINED ABSTENTION        GEMMA 4 REASONING LAYER<br>
+        • What was found              • Strict Grounding Prompt<br>
+        • What was missing            • Verbatim Quote Extraction<br>
+                                      • 1-Click Page Citations
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- QUESTION INSPECTOR MODAL -->
+  <div id="inspector-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-750 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <span id="modal-qid" class="font-mono text-xs text-brand-400 font-bold"></span>
+          <h3 id="modal-title" class="text-sm font-bold text-white"></h3>
+        </div>
+        <button onclick="closeInspectorModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <span class="text-slate-400 font-semibold">Question:</span>
+          <p id="modal-question" class="text-slate-200 mt-0.5 text-sm"></p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 bg-slate-950 p-3 rounded-lg border border-slate-800">
+          <div>
+            <span class="text-slate-400">Category:</span>
+            <div id="modal-category" class="font-semibold text-slate-200"></div>
+          </div>
+          <div>
+            <span class="text-slate-400">Outcome:</span>
+            <div id="modal-outcome" class="font-semibold text-emerald-400"></div>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-slate-400 font-semibold">Generated Response:</span>
+          <p id="modal-answer" class="text-slate-200 bg-slate-950 p-3 rounded-lg border border-slate-800 mt-1 leading-relaxed"></p>
+        </div>
+
+        <div>
+          <span class="text-slate-400 font-semibold">Retrieved Official Sources:</span>
+          <div id="modal-sources" class="text-slate-300 font-mono text-[11px] mt-1 space-y-1"></div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-3 flex justify-end">
+        <button onclick="closeInspectorModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER DOCUMENT SUMMARY MODAL -->
+  <div id="user-summary-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-750 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="file-text" class="w-4 h-4 text-brand-400"></i>
+          <h3 class="text-sm font-bold text-white">Document Executive Summary</h3>
+        </div>
+        <button onclick="closeUserSummaryModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+          <span class="text-slate-400 font-semibold block text-[11px]">Document Name</span>
+          <div id="sum-modal-filename" class="font-bold text-white text-sm mt-0.5"></div>
+        </div>
+
+        <div>
+          <span class="text-slate-400 font-semibold block text-[11px]">Short Summary</span>
+          <p id="sum-modal-short" class="text-slate-200 bg-slate-950 p-3 rounded-lg border border-slate-800 mt-1 leading-relaxed"></p>
+        </div>
+
+        <div>
+          <span class="text-slate-400 font-semibold block text-[11px]">Main Topics & Sections</span>
+          <div id="sum-modal-topics" class="flex flex-wrap gap-1.5 mt-1.5"></div>
+        </div>
+
+        <div>
+          <span class="text-slate-400 font-semibold block text-[11px]">Important Dates & Timelines</span>
+          <div id="sum-modal-dates" class="space-y-1 mt-1 text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800 font-mono text-[11px]"></div>
+        </div>
+
+        <div>
+          <span class="text-slate-400 font-semibold block text-[11px]">Important Rules & Eligibility Criteria</span>
+          <div id="sum-modal-rules" class="space-y-1.5 mt-1 text-slate-200"></div>
+        </div>
+
+        <div>
+          <span class="text-slate-400 font-semibold block text-[11px]">Key Points & Takeaways</span>
+          <div id="sum-modal-keypoints" class="space-y-1.5 mt-1 text-slate-300"></div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-3 flex justify-end">
+        <button onclick="closeUserSummaryModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER SOURCE VERIFICATION MODAL -->
+  <div id="user-source-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-750 rounded-2xl max-w-3xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="file-search" class="w-4 h-4 text-amber-400"></i>
+          <h3 class="text-sm font-bold text-white">Source Verification & Page Reader</h3>
+        </div>
+        <button onclick="closeUserSourceModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between text-xs bg-slate-950 p-3 rounded-lg border border-slate-800 shrink-0">
+        <div>
+          <span class="text-slate-400 font-semibold">Document:</span>
+          <span id="src-modal-docname" class="font-bold text-white ml-1"></span>
+        </div>
+        <div class="flex items-center space-x-2 font-mono text-[11px]">
+          <span class="px-2 py-0.5 rounded bg-brand-500/20 text-brand-300">Page <strong id="src-modal-pagenum">1</strong></span>
+          <span id="src-modal-heading" class="text-slate-400"></span>
+        </div>
+      </div>
+
+      <div class="shrink-0 bg-amber-950/30 border border-amber-600/40 p-3 rounded-lg text-xs space-y-1">
+        <span class="text-amber-400 font-bold block text-[11px]">Cited Passage Excerpt:</span>
+        <p id="src-modal-snippet" class="text-amber-100 italic font-mono text-[11px]"></p>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-2 pr-1">
+        <span class="text-slate-400 font-semibold text-xs block">Full Extracted Page Text:</span>
+        <div id="src-modal-pagetext" class="bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 whitespace-pre-line leading-relaxed selection:bg-amber-400 selection:text-slate-950">
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-3 flex justify-end shrink-0">
+        <button onclick="closeUserSourceModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPARTMENT & COLLECTION SUMMARY MODAL -->
+  <div id="collection-summary-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-750 rounded-2xl max-w-3xl w-full p-6 space-y-5 shadow-2xl max-h-[88vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div id="col-modal-icon-container" class="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center shrink-0">
+            <i id="col-modal-icon" data-lucide="layers" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 id="col-modal-title" class="text-base sm:text-lg font-bold text-white"></h3>
+              <span id="col-modal-count-badge" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-brand-500/15 border border-brand-500/30 text-brand-300 font-semibold"></span>
+            </div>
+            <p id="col-modal-title-mr" class="text-xs text-slate-400 mt-0.5 font-medium"></p>
+          </div>
+        </div>
+        <button onclick="closeCollectionModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Department Overview -->
+      <div class="space-y-1.5">
+        <h4 class="text-xs uppercase tracking-wider font-bold text-slate-400 flex items-center space-x-1.5">
+          <i data-lucide="info" class="w-3.5 h-3.5 text-brand-400"></i>
+          <span>Department Mandate & Overview</span>
+        </h4>
+        <p id="col-modal-overview" class="text-xs sm:text-sm text-slate-200 leading-relaxed bg-slate-950 p-4 rounded-xl border border-slate-800"></p>
+      </div>
+
+      <!-- Department Quick Facts & Metrics -->
+      <div id="col-modal-metrics-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <!-- Populated dynamically -->
+      </div>
+
+      <!-- Indexed Official Schemes & Resolutions List -->
+      <div class="space-y-3 pt-1">
+        <h4 class="text-xs uppercase tracking-wider font-bold text-slate-400 flex items-center justify-between">
+          <span class="flex items-center space-x-1.5">
+            <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Official Schemes & Government Resolutions (GRs)</span>
+          </span>
+          <span class="text-[11px] text-slate-500 font-normal">Click Read or Ask to interact</span>
+        </h4>
+
+        <div id="col-modal-schemes-list" class="space-y-3">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="border-t border-slate-800 pt-3 flex items-center justify-between text-xs">
+        <span class="text-slate-500 text-[11px]">LocalLens Verified Maharashtra Knowledge Base</span>
+        <button onclick="closeCollectionModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-slate-900/60 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center space-x-2">
+        <span class="font-bold text-slate-300">LocalLens</span>
+        <span>•</span>
+        <span>Gemma 4 Hackathon System</span>
+        <span>•</span>
+        <span>Maharashtra Knowledge Domain</span>
+      </div>
+      <div>
+        <span>«Ask locally. Get answers you can verify.»</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CLIENT-SIDE APPLICATION SCRIPT -->
+  <script src="/static/app.js"></script>
+</body>
+</html>

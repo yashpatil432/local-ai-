@@ -1,0 +1,16 @@
+{
+  "total_questions": 50,
+  "answerable_count": 40,
+  "unanswerable_count": 10,
+  "ambiguous_count": 5,
+  "multilingual_count": 5,
+  "answer_accuracy": 94.0,
+  "citation_accuracy": 100.0,
+  "evidence_recall_at_5": 100.0,
+  "groundedness_score": 100.0,
+  "hallucination_rate": 0.0,
+  "correct_abstention_rate": 100.0,
+  "avg_latency_ms": 1.5,
+  "p95_latency_ms": 2.8,
+  "timestamp": "2026-10-06T14:12:23.997146"
+}
