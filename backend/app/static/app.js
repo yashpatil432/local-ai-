@@ -1659,6 +1659,16 @@ function closeUserSourceModal() {
 // FLOATING GEMMA 4 AI CHATBOT CONTROLLER
 // =====================================================================
 
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 let chatbotHistory = [];
 let isChatbotOpen = false;
 

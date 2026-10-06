@@ -2202,17 +2202,19 @@ USER QUESTION ─────────► QUERY PROCESSOR (Language Detect & 
 
     <!-- Chatbot Input Footer -->
     <div id="chatbot-footer" class="p-3 bg-slate-850 border-t border-slate-800 shrink-0 space-y-2">
-      <form id="chatbot-form" onsubmit="handleChatSubmit(event)" class="flex items-center space-x-2">
+      <form id="chatbot-form" onsubmit="handleChatSubmit(event); return false;" class="flex items-center space-x-2">
         <input 
           id="chatbot-input" 
           type="text" 
           placeholder="Ask Gemma 4 about schemes, rules, or documents..." 
           autocomplete="off"
+          onkeydown="if(event.key==='Enter'){handleChatSubmit(event); return false;}"
           class="flex-1 px-3.5 py-2 text-xs rounded-xl bg-slate-900 border border-slate-750 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition shadow-inner"
         />
         <button 
           id="chatbot-send-btn" 
-          type="submit" 
+          type="button" 
+          onclick="handleChatSubmit(event)"
           class="px-3.5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl shadow-md transition flex items-center justify-center shrink-0 cursor-pointer disabled:opacity-50"
         >
           <i data-lucide="send" class="w-4 h-4"></i>
@@ -2246,6 +2248,6 @@ USER QUESTION ─────────► QUERY PROCESSOR (Language Detect & 
   </footer>
 
   <!-- CLIENT-SIDE APPLICATION SCRIPT -->
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=2.2"></script>
 </body>
 </html>
