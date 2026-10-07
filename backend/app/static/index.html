@@ -624,14 +624,16 @@
       transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     #locallens-chat-widget.chat-hidden {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(20px) scale(0.96);
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translateY(20px) scale(0.96) !important;
     }
     #locallens-chat-widget.chat-visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
+      display: flex !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      transform: translateY(0) scale(1) !important;
     }
     
     html.light #locallens-chat-widget {
@@ -2150,11 +2152,23 @@ USER QUESTION ─────────► QUERY PROCESSOR (Language Detect & 
         </div>
       </div>
       <div class="flex items-center space-x-1">
-        <button onclick="clearChatHistory()" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition" title="Clear Conversation">
-          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        <button 
+          id="chatbot-clear-btn" 
+          onclick="clearChatHistory()" 
+          class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition cursor-pointer flex items-center justify-center" 
+          title="Clear Conversation"
+          aria-label="Clear Conversation"
+        >
+          <i data-lucide="rotate-ccw" class="w-4 h-4 pointer-events-none"></i>
         </button>
-        <button onclick="toggleChatbotWidget()" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition" title="Minimize Chat">
-          <i data-lucide="x" class="w-4 h-4"></i>
+        <button 
+          id="chatbot-close-btn" 
+          onclick="closeChatbotWidget()" 
+          class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition cursor-pointer flex items-center justify-center" 
+          title="Close Chat"
+          aria-label="Close Chat"
+        >
+          <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i>
         </button>
       </div>
     </div>
@@ -2248,6 +2262,6 @@ USER QUESTION ─────────► QUERY PROCESSOR (Language Detect & 
   </footer>
 
   <!-- CLIENT-SIDE APPLICATION SCRIPT -->
-  <script src="/static/app.js?v=2.2"></script>
+  <script src="/static/app.js?v=2.3"></script>
 </body>
 </html>

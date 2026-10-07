@@ -1672,24 +1672,45 @@ function escapeHtml(text) {
 let chatbotHistory = [];
 let isChatbotOpen = false;
 
+function openChatbotWidget() {
+  const widget = document.getElementById('locallens-chat-widget');
+  if (!widget) return;
+
+  isChatbotOpen = true;
+  widget.style.display = 'flex';
+  widget.classList.remove('chat-hidden');
+  widget.classList.add('chat-visible');
+
+  setTimeout(() => {
+    const input = document.getElementById('chatbot-input');
+    if (input) input.focus();
+  }, 100);
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeChatbotWidget() {
+  const widget = document.getElementById('locallens-chat-widget');
+  if (!widget) return;
+
+  isChatbotOpen = false;
+  widget.classList.remove('chat-visible');
+  widget.classList.add('chat-hidden');
+  widget.style.display = 'none';
+
+  if (window.lucide) lucide.createIcons();
+}
+
 function toggleChatbotWidget() {
   const widget = document.getElementById('locallens-chat-widget');
   if (!widget) return;
 
-  isChatbotOpen = !isChatbotOpen;
-  if (isChatbotOpen) {
-    widget.classList.remove('chat-hidden');
-    widget.classList.add('chat-visible');
-    setTimeout(() => {
-      const input = document.getElementById('chatbot-input');
-      if (input) input.focus();
-    }, 150);
+  const isVisible = widget.classList.contains('chat-visible') && widget.style.display !== 'none';
+  if (isVisible) {
+    closeChatbotWidget();
   } else {
-    widget.classList.remove('chat-visible');
-    widget.classList.add('chat-hidden');
+    openChatbotWidget();
   }
-
-  if (window.lucide) lucide.createIcons();
 }
 
 function sendQuickPrompt(promptText) {
